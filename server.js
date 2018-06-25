@@ -7,6 +7,30 @@ app.get('/', (req, res) => {
 	res.sendFile(__dirname + '/views/index.html');
 });
 
+app.get('/signUp', (req, res) => {
+	res.sendFile(__dirname + '/views/signUp.html');
+});
+
+app.get('/login', (req, res) => {
+	res.sendFile(__dirname + '/views/login.html');
+});
+
+app.get('/homePage', (req, res) => {
+	res.sendFile(__dirname + '/views/homePage.html');
+});
+
+app.get('/userProfile', (req, res) => {
+	res.sendFile(__dirname + '/views/profile.html');
+});
+
+app.get('/dashboard', (req, res) => {
+	res.sendFile(__dirname + '/views/dashboard.html');
+});
+
+app.get('/21-day-challenge', (req, res) => {
+	res.sendFile(__dirname + "/views/21-day-challenge.html");
+});
+
 let server;
 
 function runServer(){
