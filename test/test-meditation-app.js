@@ -63,14 +63,14 @@ describe('Meditation-app API resource', function(){
 			});
 		});
 
-		it('should return dashboard page', function(){
+	/*	it('should return dashboard page', function(){
 			return chai.request(app)
 			.get('/dashboard')
 			.then(function(res){
 				expect(res).to.have.status(200);
 				expect(res).to.be.html;
 			});
-		});
+		}); */
 
 		it('should return 21-day challenge page', function(){
 			return chai.request(app)

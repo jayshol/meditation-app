@@ -1,1 +1,61 @@
-<p>Hello world</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Meditation App</title>
+	<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+	<div class="container">
+		<div class="navigation">
+			<ul>
+			  <li id="signUpBtn">Sign Up</li>
+			  <li id="loginBtn">Login</li>
+			  <li id="dashboardBtn">Dashboard</li>
+			  <li id="challengeBtn">21 Day Challenge</li>
+			</ul>
+		</div>
+		<main>
+			<div class="container-home">
+				<header>
+					<h1>Focus</h1>
+				</header>
+				<p>Meditate. Let the light of the heart engulf you.</p>
+				<div class="buttonDivCls">
+					<button id="signUp" name="signUp" class="buttonCls">Sign Up</button>
+					<button id="login" name="login" class="buttonCls">Login</button>
+				</div>
+			</div>
+			<div class="container-dashboard">
+				<h1>Dashboard</h1>
+				<p class="streakCls">Currently running a :<span></span> day streak.</p>
+				<p class="streakCls">Number of days meditated :<span></span> days.</p>
+				<p class="challengeCls">You are registered for 21-day challenge</p>
+				<p class="challengeCls js-challenge"></p>				
+				<div class="badgesDiv"></div>
+				<div class="achievements">					
+					<div class="registered">
+						<h3>Registered Challenges</h3>
+						<div></div>
+					</div>					
+					<div class="completed">
+						<h3>Completed Challenges</h3>
+						<div></div>
+					</div>
+				</div>				
+			</div>
+			<div class="container-challenge">
+				<h1>21 Day Challenge</h1>
+				<p>21 day Challenge starts on the first of every month and continues till 21st of each month. Users can sign up for this challenge and win the 21 day challenge badge.</p>				
+				<div class="usersList"></div>
+					
+				
+			</div> 
+		</main>	
+	</div>	
+	<script
+          src="https://code.jquery.com/jquery-3.2.1.min.js"
+          integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+          crossorigin="anonymous"></script>
+	<script src="/index.js"></script>
+</body>
+</html>
