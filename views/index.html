@@ -12,6 +12,7 @@
 			  <li id="loginBtn">Login</li>
 			  <li id="dashboardBtn">Dashboard</li>
 			  <li id="challengeBtn">21 Day Challenge</li>
+			  <li id="meditate-btn">Meditate</li>
 			</ul>
 		</div>
 		<main>
@@ -45,11 +46,27 @@
 			</div>
 			<div class="container-challenge">
 				<h1>21 Day Challenge</h1>
-				<p>21 day Challenge starts on the first of every month and continues till 21st of each month. Users can sign up for this challenge and win the 21 day challenge badge.</p>				
-				<div class="usersList"></div>
-					
-				
-			</div> 
+				<p>21 day Challenge starts on the first of every month and continues till 21st of each month. Users can sign up for this challenge and win the 21 day challenge badge.</p>
+				<p>Today is the <span></span> of the challenge</p>
+				<p><span></span> out of the total <span></span> registered users are actively meditating so far.</p>	
+				<div class="usersList"></div>								
+			</div>
+			<div class="container-meditate">
+				<h2 class="textClass">Choose an audio for meditation</h2>
+				<div class="audio-container">										
+				</div>
+			</div>
+			<div class="meditation-window">
+				<div >
+					<h2 class="headerClass">Meditate</h2>
+					<div class="audioTagClass">
+						<audio controls="controls" id="player">
+							<source id="audio-src" src="">
+								Your browser does not support audio tag.
+						</audio>						
+					</div>
+				</div>
+			</div>
 		</main>	
 	</div>	
 	<script
