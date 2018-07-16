@@ -1,20 +1,113 @@
 
+let userId = '5b45c97f772ea0e87c00dc3a';
+let serverBase = '//localhost:8080/';
+let Users_Url = serverBase + 'users';
+let Audio_Url = serverBase + 'audios';
+let Badge_Url = serverBase + 'badges';
+let Challenge_Url = serverBase + 'challenges';
+let user = null;
+
 function handleNavigationClicks(){
 	$('#dashboardBtn').click(displayDashboard);
 	$('#challengeBtn').click(challengeReport);
 	$('#meditate-btn').click(meditationPage);
 	$('.audio-container').on("click", ".meditation-audio", displayMeditationWindow);
+	$('.js-nextChallenge').click(handleSignUp);
 	togglePageManager('.container-home');
+}
+
+function handleSignUp(){
+	const month = monthNames[new Date().getMonth() + 1];
+	const text = "You will be signed up for " + month + " month's 21-day challenge.";
+	if(confirm(text)){
+		getUserObject(function(userObj){
+			if(userObj !== null){
+				userObj.isRegisteredForNextChallenge = true;
+				user = userObj;
+				console.dir(userObj);
+				//$.put(Users_Url, user, getChallengeObject);
+				//getChallengeObject();
+				$.ajax({
+					url: Users_Url +"/" + userId,
+					method: 'PUT',
+					data: JSON.stringify(userObj),
+					success: function(data){
+						getChallengeObject();
+					},
+					dataType: 'json',
+					contentType: 'application/json'
+				});
+			}
+		});		
+	}
+}
+function getChallengeObject(){
+	//user = user;
+	//console.dir(user);
+	const challengeName = monthNames[new Date().getMonth() + 1] + "-" + new Date().getFullYear();
+	const url = Challenge_Url + "/" + challengeName;
+	console.log(url);
+	$.getJSON(url, updateChallenges);
+}
+
+function updateChallenges(challenge){
+	let challengeObject;
+	//console.dir(user);
+	if(challenge === null){
+		const name = monthNames[new Date().getMonth() + 1] + "-" + new Date().getFullYear();
+		const usersArray = [];
+		usersArray.push(user);
+
+		const newObject = {
+			name : name,
+			registeredUsers : usersArray,
+			startDate : formatDate((new Date().getMonth()+2) + "/1/" + new Date().getFullYear()),
+			endDate : formatDate((new Date().getMonth()+2) + "/21/" + new Date().getFullYear()),
+			status : "Not Started"
+		}
+	//	challengeObject = newObject;
+		console.dir(newObject);
+
+		$.ajax({
+			url: Challenge_Url,
+			method: 'POST',
+			data: JSON.stringify(newObject),
+			success: function(){
+				alert("You are signed up.");
+			},
+			dataType: 'json',
+			contentType:'application/json'
+		});
+		
+	} else{
+		challenge.registeredUsers.push(user);
+		//challengeObject = challenge;
+
+		$.ajax({
+			url :Challenge_Url + "/" + challenge.name,
+			method: "PUT",
+			data : JSON.stringify(challenge),
+			success : function(data){
+				alert("User signed up");
+			},
+			dataType : 'json',
+			contentType: 'application/json'
+		}); 
+	}
+
+	
 }
 
 function meditationPage(){
 	togglePageManager('.container-meditate');
-	for(let i=0;i<audioData.length;i++){
 
+	$.getJSON(Audio_Url, function(audios){
+		for(let i=0;i<audios.length;i++){
 		let htmlString = `<div class="image-container" >
-				<img src='${audioData[i].imageUrl}' alt="meditation audio" class="meditation-audio" data-audio='${JSON.stringify(audioData[i])}' /></div>`;		
+				<img src='${audios[i].imageUrl}' alt="meditation audio" class="meditation-audio" data-audio='${JSON.stringify(audios[i])}' /></div>`;		
 		$('.audio-container').append(htmlString);
-	}	 							
+		}	
+	});	 							
 }
 
 function displayMeditationWindow(event){
@@ -32,11 +125,12 @@ function displayMeditationWindow(event){
 function meditationComplete(){
 	$(this).currentTime = 0;
 	console.log("ended");
-	updateUserData('111');	
+	//updateUserData();
+	getUserObject(updateUserData);
 }
 
-function updateUserData(userId){
-	const user = getUserObject(userId);
+function updateUserData(user){
+	console.dir(user);
 	if(user !== null){
 		user.numberOfDaysMeditated += 1;
 		//checkStreak(user.lastMeditated);
@@ -49,26 +143,20 @@ function updateUserData(userId){
 			}
 		}
 		user.lastMeditated = formatDate(new Date());
+
 	}	
 }
 
 function checkAndUpdateBadges(user){
-	const name = user.streak + '-day';
-
-	for(let i=0;i<badges.length;i++){
-		if(badges[i].name === name){
-			if(user.streak === 21){
-				if(user.active){
-					user.badges.push(badges[i]);					
-				}
-			}else{
-				user.badges.push(badges[i]);
-			}			
-		}
-	}
-
-	console.dir(user);
-	
+	if(user.streak === 21 && user.active !== true){
+		return;
+	}else{
+		const name = user.streak + '-day';
+		let url = Badge_Url + "/" + name;
+		$.getJSON(url, function(badge){
+			user.badges.push(badge);
+		});
+	}			
 }
 
 function checkStreak(lastMeditated){
@@ -86,26 +174,24 @@ function checkStreak(lastMeditated){
 }
 
 function formatDate(dateString){
-	let dateObject = new Date(dateString);
-	let	formattedDate = (dateObject.getMonth() + 1) < 10 ? '0' + (dateObject.getMonth()+1) : (dateObject.getMonth() + 1);
-	formattedDate += "/" + ((dateObject.getDate() < 10) ? ('0'+ dateObject.getDate()) : dateObject.getDate());
 	
-	formattedDate += "/" + dateObject.getFullYear();
+	const dateObject = (dateString !== undefined) ? new Date(dateString) : new Date();
+		 console.dir(dateObject);
+	const	month = (dateObject.getMonth()+1) < 10 ? "0" + (dateObject.getMonth()+1) : dateObject.getMonth()+1;
+	const date = (dateObject.getDate() < 10) ? "0" + dateObject.getDate() : dateObject.getDate();
+	//console.log(formattedDate);
+	
+	const formattedDate = month +"/" + date + "/" + dateObject.getFullYear();
 
 	console.log(formattedDate);
 	return formattedDate;
-
-
 }
 
-function getUserObject(userId){
-	for(let i=0;i<usersObj.length;i++){
-		const user = usersObj[i];
-		if(user.userId === userId){
-			return user;
-		}
-	}
-	return null;
+function getUserObject(callBack){
+	const url = Users_Url + "/" + userId;
+	$.getJSON(url, function(user){
+		callBack(user);
+	}); 		
 }
 
 function challengeReport(){
@@ -186,7 +272,12 @@ function createHeader(){
 function displayDashboard(){
 	//alert("hi");
 	togglePageManager('.container-dashboard');
-	populateDashboard();
+	const resourceURL = Users_Url + "/" + userId;
+	$.getJSON(resourceURL, function(user){
+		console.dir(user);
+		populateDashboard(user);
+	});
+	
 }
 
 function togglePageManager(pageName){	
@@ -205,28 +296,28 @@ function togglePageManager(pageName){
 
 }
 
-function populateDashboard(){
+function populateDashboard(user){
 
-	for(let i=0;i<dashboardData.badges.length;i++){
-		let htmlString = "<div class='badgeClass'><img src='" + dashboardData.badges[i].imageUrl + "' alt='badge image' /><span>" + dashboardData.badges[i].type + "</span></div>";
+	for(let i=0;i<user.badges.length;i++){
+		let htmlString = "<div class='badgeClass'><img src='" + user.badges[i].imageUrl + "' alt='badge image' /><span>" + user.badges[i].name + "</span></div>";
 		$('.badgesDiv').append(htmlString);
 	}
 
-	$('.streakCls').first().find('span').text(dashboardData.streak);
-	$('.streakCls').next().find('span').text(dashboardData.numberOfDaysMeditated);
+	$('.streakCls').first().find('span').text(user.streak);
+	$('.streakCls').next().find('span').text(user.numberOfDaysMeditated);
 	
-	if(dashboardData.isRegisteredForCurrent === 'yes'){
+	if(user.isRegisteredForCurrent === 'yes'){
 		$('.challengeCls').first().show();
 	}else{
 		$('.challengeCls').first().hide();
 	}
 
-	const str = (dashboardData.isRegisteredForNext === 'yes')? 'You are signed up for Next month\'s 21 day challenge': 'Sign up for next month\'s 21 day challenge.';
+	const str = (user.isRegisteredForNext === 'yes')? 'You are signed up for Next month\'s 21 day challenge': 'Sign up for next month\'s 21 day challenge.';
 
 	$('.js-challenge').text(str); 	
 
-	fillAchievements('.registered', dashboardData.registeredChallenges);
-	fillAchievements('.completed', dashboardData.completedChallenges);
+	//fillAchievements('.registered', user.registeredChallenges);
+	//fillAchievements('.completed', user.completedChallenges);
 	
 }
 
@@ -239,7 +330,7 @@ function fillAchievements(className, array){
 }
 
 const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
+/*
 const dashboardData = {
 	userName: "xyz",
 	badges:[{
@@ -279,7 +370,7 @@ const dashboardData = {
 	isRegisteredForNext:'yes',
 	numberOfDaysMeditated: 15
 };
-
+*/
 const challengeData = {
 	registeredUsers:[{
 		userId: '111',
@@ -315,16 +406,17 @@ const challengeData = {
 	startDate: '01-01-2018',
 	endDate: '01-21-2018'
 }; 
-
+/*
 const audioData = [{
 	name: 'Relaxation Meditations',
 	url:'/music/relaxationMeditation.mp3',
 	imageUrl:'/images/meditation1.jpg'
 }];
-
+*/
+/*
 const badges = [{
 	name: '3-day',
-	image:'/images/3-day-badge.jpg'
+	imageUrl:'/images/3-day-badge.jpg'
 },
 {
 	name: '7-day',
@@ -354,14 +446,15 @@ const badges = [{
 	name: 'gold',
 	image:'/images/gold-badge.jpg'
 }];
-
+*/
+/*
 const usersObj = [{
 	userId: '111',
   userName: 'aaa',
   password: 'xyz',
   facebookId:  'xyz',
   badges: [{
-		type: '3-day',
+		name: '3-day',
 		imageUrl: '/images/3-day-badge.jpg',		
 	}],
   registeredForCurrentChallenge: true,
@@ -381,7 +474,7 @@ const usersObj = [{
   password: 'abc',
   facebookId: 'abc' ,
   badges: [{
-		type: '3-day',
+		name: '3-day',
 		imageUrl: '/images/3-day-badge.jpg',		
 	}],
   registeredForCurrentChallenge: false,
@@ -415,7 +508,7 @@ const usersObj = [{
   numberOfDaysMeditated: 25,
   active:true
 }];
-
+*/
 
 $(function(){
 	//alert("hello");
