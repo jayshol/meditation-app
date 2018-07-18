@@ -1,22 +1,89 @@
 
-let userId = '5b45c97f772ea0e87c00dc3a';
-let serverBase = '//localhost:8080/';
-let Users_Url = serverBase + 'users';
-let Audio_Url = serverBase + 'audios';
-let Badge_Url = serverBase + 'badges';
-let Challenge_Url = serverBase + 'challenges';
-let user = null;
+const userId = '5b45c97f772ea0e87c00dc3a';
+const serverBase = '//localhost:8080/';
+const Users_Url = serverBase + 'users';
+const Audio_Url = serverBase + 'audios';
+const Badge_Url = serverBase + 'badges';
+const Challenge_Url = serverBase + 'challenges';
+const SignUp_Url = serverBase + "api/users/signup";
+const Login_Url = serverBase + "api/auth/login";
+const user = null;
 
 function handleNavigationClicks(){
+	$('.js-displaySignup').click(displaySignUp);
+	$('.js-displayLogin').click(displayLogin);
+	$('.signUpForm').submit(handleSignUp);
+	$('.loginForm').submit(loginUser);
 	$('#dashboardBtn').click(displayDashboard);
 	$('#challengeBtn').click(challengeReport);
 	$('#meditate-btn').click(meditationPage);
 	$('.audio-container').on("click", ".meditation-audio", displayMeditationWindow);
-	$('.js-nextChallenge').click(handleSignUp);
+	$('.js-nextChallenge').click(handleChallengeSignUp);
 	togglePageManager('.container-home');
 }
 
-function handleSignUp(){
+function displaySignUp(){
+	togglePageManager('.signup-window');
+}
+
+function displayLogin(){
+	togglePageManager('.login-window');
+}
+
+function loginUser(event){
+	event.preventDefault();
+	const formData = getFormData($('.loginForm').serializeArray());
+	$.ajax({
+		url: Login_Url,
+		method: "POST",
+		dataType : 'json',
+		data : JSON.stringify(formData),
+		success: generateUserToken,
+		error: function(err){
+			console.dir(err);
+		},
+		contentType: 'application/json'
+	});
+}
+
+function handleSignUp(event){
+	event.preventDefault();
+	const formData = getFormData($('.signUpForm').serializeArray());
+	$.ajax({
+		url: SignUp_Url,
+		method: "POST",
+		dataType:'json',
+		data : JSON.stringify(formData),
+		success : userSignedUp,
+		error: function(err){
+			const error = JSON.parse(err.responseText);
+			alert(error.location + " " + error.message);
+		},
+		contentType:'application/json'
+	})
+	
+	//alert("in sign up");
+}
+
+function getFormData(data){
+	const indexed_array = {};
+
+   $.map(data, function(n, i) {
+    indexed_array[n['name']] = n['value'];
+   });
+   console.dir(indexed_array);
+   return indexed_array;
+}
+
+function generateUserToken(data) {
+	console.log(data);
+}
+
+function userSignedUp(data){
+	alert("user signed Up");
+}
+
+function handleChallengeSignUp(){
 	const month = monthNames[new Date().getMonth() + 1];
 	const text = "You will be signed up for " + month + " month's 21-day challenge.";
 	if(confirm(text)){
@@ -41,6 +108,7 @@ function handleSignUp(){
 		});		
 	}
 }
+
 function getChallengeObject(){
 	//user = user;
 	//console.dir(user);
@@ -285,7 +353,9 @@ function togglePageManager(pageName){
 					   '.container-dashboard', 
 					   '.container-challenge', 
 					   '.container-meditate',
-					   '.meditation-window'
+					   '.meditation-window',
+					   '.signup-window',
+					   '.login-window'
 					   ];
 	for(let i=0; i<pageNames.length; i++){
 		if(pageNames[i] !== pageName) {			

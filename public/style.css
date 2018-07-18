@@ -288,3 +288,16 @@ h3{
 	width: 300px;
 	margin: 0 auto;
 }
+
+/* sign up form */
+
+.signup-window, .login-window {
+	width: 50%;
+	height: 50%;
+	margin:100px auto 0 auto;
+	color: white;
+	font-size: 20px;
+}
+.signup-window div, .login-window div{
+	margin-bottom: 15px;
+}

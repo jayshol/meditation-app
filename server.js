@@ -2,6 +2,7 @@ const express = require('express');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 const bodyParser = require("body-parser");
+const passport = require('passport');
 mongoose.Promise = global.Promise;
 
 const {DATABASE_URL, PORT} = require('./config');
@@ -10,11 +11,27 @@ const {Audio} = require('./models/audio');
 const {Badge} = require('./models/badges');
 const {Challenge} = require('./models/challenge');
 
+const {router:userRouter } = require('./userRouter');
+const {router: authRouter, localStrategy, jwtStrategy} = require('./auth');
+
 const jsonParser = bodyParser.json();
 const app = express();
 app.use(morgan('common'));
 app.use(express.json());
 app.use(express.static('public'));
+
+passport.use(localStrategy);
+passport.use(jwtStrategy);
+app.use('/api/users/', userRouter);
+app.use('/api/auth', authRouter);
+
+const jwtAuth = passport.authenticate('jwt', {session:false});
+
+app.get('/api/protected', jwtAuth, (req, res) => {
+	return res.json({
+		data:'rosebud'
+	});
+});
 
 app.get('/', (req, res) => {
 	res.sendFile(__dirname + '/views/index.html');

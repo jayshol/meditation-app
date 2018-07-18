@@ -8,8 +8,8 @@
 	<div class="container">
 		<div class="navigation">
 			<ul>
-			  <li id="signUpBtn">Sign Up</li>
-			  <li id="loginBtn">Login</li>
+			  <li class='js-displaySignup'>Sign Up</li>
+			  <li class="js-displayLogin">Login</li>
 			  <li id="dashboardBtn">Dashboard</li>
 			  <li id="challengeBtn">21 Day Challenge</li>
 			  <li id="meditate-btn">Meditate</li>
@@ -25,6 +25,44 @@
 					<button id="signUp" name="signUp" class="buttonCls">Sign Up</button>
 					<button id="login" name="login" class="buttonCls">Login</button>
 				</div>
+			</div>
+			<div class="signup-window">				
+				<form role="form" class="signUpForm">
+					<fieldset>
+						<legend>
+							Sign Up
+						</legend>
+						<div>
+						<label for="userName">UserName: </label>
+						<input type="text" name="userName" required />
+					</div>
+					<div>
+						<label for="password">Password: </label>
+						<input type="password" name="password" required />
+					</div>
+					<div>
+						<button type="submit">Sign Up</button>
+					</div>
+					</fieldset>
+				</form>				
+			</div>
+			<div class="login-window">
+				<form role="form" class="loginForm">
+					<fieldset>
+						<legend>Login</legend>
+						<div>
+							<label for="username">UserName :</label>
+							<input type="text" name="username"  required />
+						</div>
+						<div>
+							<label for="password">Password</label>
+							<input type="password" name="password"  required />
+						</div>
+						<div>
+							<button type="submit">Login</button>
+						</div>
+					</fieldset>
+				</form>
 			</div>
 			<div class="container-dashboard">
 				<h1>Dashboard</h1>
