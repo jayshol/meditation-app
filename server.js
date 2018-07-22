@@ -79,7 +79,7 @@ app.put('/users/:id', (req, res) => {
 
 });
 
-app.get('/audios', (req, res) => {
+app.get('/audios', jwtAuth, (req, res) => {
 	Audio
 	.find()
 	.then(audios => res.json(audios))

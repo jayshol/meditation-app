@@ -8,7 +8,7 @@ const {JWT_SECRET} = require('../config');
 const localStrategy = new LocalStrategy((username, password, callback) => {
 	let user;
 
-	User.findOne({username:username})
+	User.findOne({userName:username})
 	.then(_user => {
 		user = _user;
 		if(!user){
@@ -16,7 +16,7 @@ const localStrategy = new LocalStrategy((username, password, callback) => {
 				reason: 'LoginError',
 				message: 'Incorrect username or password'
 			});
-		}
+		}		
 		return user.validatePassword(password);
 	})
 	.then(isValid => {

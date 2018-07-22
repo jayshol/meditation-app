@@ -1,5 +1,9 @@
+
+*{
+	box-sizing: border-box;
+}
 html, body{
-	height: 100vh;
+	height: 90vh;
 	margin:0;
 	padding:0;
 }
@@ -16,15 +20,15 @@ header{
 }
 main{
 	width:100%;
-	border: 2px solid green;
-	height: 100vh;
-	margin:50px 0 0 0;
+	/*border: 2px solid green;*/
+	height: 90vh;
+	margin:50px 0 0 0; 
 	padding:0;
 }
 
 .container{
 	width: 100%;
-	height: 100%;
+	height: auto;
 	margin:0;
 	padding:0;
 }
@@ -257,25 +261,74 @@ h3{
 }
 
 .audio-container{
-	width: 80%;
-	height: 100%;
-	border:1px solid white;
-	margin: 30px auto;
-	padding: 15px;
-	
+	width: 670px;
+	height: 510px;
+/*	border:1px solid white; */
+	margin: 70px auto 10px auto;
+	/*padding: 10px;*/
+	overflow-y: visible;
 }
+/*
+#outerContainer{
+	width: 250px;
+	min-height:250px;
+	display:inline-block;
+	border: 1px solid yellow;
+	margin:0;	
+}*/
 .meditation-audio{
 	width: 100%;
-	height: 100%; 
+	height: 100%;
+	z-index: 1;	
 }
+
+.meditation-audio:hover{
+	/*transform:scale(1.5);*/		
+}
+
 .image-container{
-	width: 170px;
-	height: 180px;
+	width: 120px;
+	height: 120px;
 	/*background: url('/images/meditation1.jpg') no-repeat center top;
 	background-size: 170px 180px; 	*/
 	/*float:left;
 	clear:none;*/
 	cursor: pointer;
+	display:inline-block;
+	margin: 20px;
+	border-radius: 15px;
+	/*border: 1px solid white;*/
+	overflow:hidden;	
+	transition: transform .2s; 
+	position: relative;	
+}
+
+
+.image-container:hover{
+	transform:scale(1.5);
+	opacity: 0.25; 
+}
+
+
+.js-text{
+	font-size: 8px;
+	position: absolute;
+	width: 120px;
+	height: 120px;
+	line-height: 120px;
+	text-align: center;
+	z-index: 10;	
+	opacity: 0;
+	transition: all 0.5s ease;
+	top:0;
+	color: white;
+	font-size: 22px;
+	font-weight: bolder;
+}
+
+.js-text:hover{
+	opacity: 1;	
+	z-index: 100;
 }
 
 .headerClass{
@@ -284,9 +337,17 @@ h3{
 }
 
 .audioTagClass{
-	height: 300px
+	height: 200px;
 	width: 300px;
-	margin: 0 auto;
+	border: 1px solid white;	
+	display: inline-block;
+	/*margin: 0 auto;	*/
+	line-height: 200px;
+}
+
+.centerClass{
+	text-align: center;
+	line-height: 200px;
 }
 
 /* sign up form */
@@ -300,4 +361,14 @@ h3{
 }
 .signup-window div, .login-window div{
 	margin-bottom: 15px;
+}
+
+.textClass{
+	text-align: center;
+}
+
+h2.textClass{
+	margin-top: 75px;
+	font-size: 30px;
+	color: #FFD368;
 }

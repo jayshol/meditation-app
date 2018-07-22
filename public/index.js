@@ -12,13 +12,22 @@ const user = null;
 function handleNavigationClicks(){
 	$('.js-displaySignup').click(displaySignUp);
 	$('.js-displayLogin').click(displayLogin);
+	$(".js-logoutBtn").click(logoutUser);
 	$('.signUpForm').submit(handleSignUp);
 	$('.loginForm').submit(loginUser);
 	$('#dashboardBtn').click(displayDashboard);
 	$('#challengeBtn').click(challengeReport);
 	$('#meditate-btn').click(meditationPage);
-	$('.audio-container').on("click", ".meditation-audio", displayMeditationWindow);
+	$('.audio-container').on("click", ".js-text", displayMeditationWindow);
 	$('.js-nextChallenge').click(handleChallengeSignUp);
+	/*$(".audio-container").on("mouseover",".image-container", function(event){
+		//console.log("hi");
+		$(this).animate({height: "150px", width:"150px", opacity: 0.25}, 200);
+	});
+	$(".audio-container").on("mouseout",".image-container", function(event){
+		//console.log("hi");
+		$(this).animate({height: "120px", width:"120px", opacity: 1}, 200);
+	});*/
 	togglePageManager('.container-home');
 }
 
@@ -76,7 +85,14 @@ function getFormData(data){
 }
 
 function generateUserToken(data) {
-	console.log(data);
+	sessionStorage.setItem("tokenKey", data.authToken);
+	togglePageManager('.container-meditate');
+}
+
+function logoutUser(){
+	alert("hello");
+	sessionStorage.removeItem('tokenKey');
+	togglePageManager('.container-home');
 }
 
 function userSignedUp(data){
@@ -169,13 +185,28 @@ function updateChallenges(challenge){
 function meditationPage(){
 	togglePageManager('.container-meditate');
 
-	$.getJSON(Audio_Url, function(audios){
-		for(let i=0;i<audios.length;i++){
-		let htmlString = `<div class="image-container" >
-				<img src='${audios[i].imageUrl}' alt="meditation audio" class="meditation-audio" data-audio='${JSON.stringify(audios[i])}' /></div>`;		
-		$('.audio-container').append(htmlString);
-		}	
+	$.ajax({
+		url: Audio_Url,
+		method: 'GET',
+		success: populateAudioFiles,		
+		contentType: 'application/json',
+		beforeSend:function(xhr){
+			xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("tokenKey"));
+		}		
 	});	 							
+}
+
+function populateAudioFiles(audios){
+	for(let i=0;i<audios.length;i++){
+		let htmlString = `<div class="image-container">							
+							<img src='${audios[i].imageUrl}' 
+								alt="meditation audio" 
+								 class="meditation-audio"
+								data-audio='${JSON.stringify(audios[i])}' />
+								<span class="js-text">${audios[i].name}</span>														
+						  </div>`;		
+		$('.audio-container').append(htmlString);
+	}	
 }
 
 function displayMeditationWindow(event){
