@@ -37,7 +37,7 @@ app.get('/', (req, res) => {
 	res.sendFile(__dirname + '/views/index.html');
 });
 
-app.get('/users/:id', (req, res) => {
+app.get('/users/:id',jwtAuth, (req, res) => {
 		User
 		.findById(req.params.id)
 		.populate('badges')
@@ -48,7 +48,7 @@ app.get('/users/:id', (req, res) => {
 		});
 });
 
-app.put('/users/:id', (req, res) => {
+app.put('/users/:id', jwtAuth, (req, res) => {
 	if(!(req.params.id && req.body._id && req.params.id === req.body._id)){
 		const message = `Request path id (${req.params.id}) and request body id (${req.body._id})
 						must match`;
@@ -71,11 +71,11 @@ app.put('/users/:id', (req, res) => {
 			toUpdate[field] = req.body[field];
 		}
 	});
-
+	console.log(toUpdate);
 	User
-	.findByIdAndUpdate(req.body.id, {$set : toUpdate})
+	.findByIdAndUpdate(req.body._id, {$set : toUpdate})
 	.then(user => res.status(204).end())
-	.catch(err => res.status(500).json({message:'Internal server error'}));
+	.catch(err => res.status(500).json({message:err.message}));
 
 });
 
@@ -89,7 +89,7 @@ app.get('/audios', jwtAuth, (req, res) => {
 	});
 });
 
-app.get('/badges/:name', (req, res) => {
+app.get('/badges/:name', jwtAuth, (req, res) => {
 	Badge
 	.findOne({name: req.params.name})
 	.then(badge => res.json(badge))
@@ -99,7 +99,7 @@ app.get('/badges/:name', (req, res) => {
 	});
 });
 
-app.get('/challenges/:name', (req, res) => {
+app.get('/challenges/:name', jwtAuth, (req, res) => {
 	Challenge
 	.findOne({name: req.params.name})
 	.then(challenge => res.json(challenge))
@@ -129,10 +129,10 @@ app.post('/challenges', jsonParser, (req, res) => {
 	res.status(201).json(challenge);
 });
 
-app.put('/challenges/:id', (req, res)=> {
-	if(!(req.params.id && req.body.id && req.params.id === req.body.id)){
+app.put('/challenges/:id', jwtAuth, (req, res)=> {
+	if(!(req.params.id && req.body._id && req.params.id === req.body._id)){
 	const message = `Request path is (${req.params.id}) and request body id
-					(${req.body.id}) should match`;
+					(${req.body._id}) should match`;
 	console.error(message);
 	return res.status(400).json({message: message});
 	}
@@ -145,11 +145,11 @@ app.put('/challenges/:id', (req, res)=> {
 			toUpdate[field] = req.body[field];
 		}
 	});
-
+	console.log(toUpdate);
 	Challenge
-	.findByIdAndUpdate(req.params.id)
+	.findByIdAndUpdate(res.body._id, { $set: toUpdate})
 	.then(challenge => res.status(204).end())
-	.catch(err => res.status(500).json({message: 'Internal server error'}));
+	.catch(err => res.status(500).json({message: err.message}));
 });
 
 app.use("*", function(req, res){

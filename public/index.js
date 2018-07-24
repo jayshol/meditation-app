@@ -1,5 +1,4 @@
 
-const userId = '5b45c97f772ea0e87c00dc3a';
 const serverBase = '//localhost:8080/';
 const Users_Url = serverBase + 'users';
 const Audio_Url = serverBase + 'audios';
@@ -7,7 +6,16 @@ const Badge_Url = serverBase + 'badges';
 const Challenge_Url = serverBase + 'challenges';
 const SignUp_Url = serverBase + "api/users/signup";
 const Login_Url = serverBase + "api/auth/login";
-const user = null;
+let user = null;
+
+/*  progress circle   
+const circle = document.querySelector('circle');
+const radius = circle.r.baseVal.value;
+const circumference = radius * 2 * Math.PI;
+
+circle.style.strokeDasharray = `${circumference} ${circumference}`;
+circle.style.strokeDashoffset = `${circumference}`;
+*/
 
 function handleNavigationClicks(){
 	$('.js-displaySignup').click(displaySignUp);
@@ -20,6 +28,9 @@ function handleNavigationClicks(){
 	$('#meditate-btn').click(meditationPage);
 	$('.audio-container').on("click", ".js-text", displayMeditationWindow);
 	$('.js-nextChallenge').click(handleChallengeSignUp);
+	$('#homeBtn').click(function(){
+		togglePageManager('.container-home');
+	});
 	/*$(".audio-container").on("mouseover",".image-container", function(event){
 		//console.log("hi");
 		$(this).animate({height: "150px", width:"150px", opacity: 0.25}, 200);
@@ -29,7 +40,23 @@ function handleNavigationClicks(){
 		$(this).animate({height: "120px", width:"120px", opacity: 1}, 200);
 	});*/
 	togglePageManager('.container-home');
+	$(window).click(function(e) {
+	  if (!e.target.matches('.dropbtn')) {
+	    var myDropdown = document.getElementById("myDropdown");
+	      if (myDropdown.classList.contains('show')) {
+	        myDropdown.classList.remove('show');
+	      }
+	  }
+	});
+
+	$('.dropbtn').click(myFunction);
 }
+
+function myFunction() {
+    $("#myDropdown").toggleClass("show");
+}
+
+// Close the dropdown if the user clicks outside of it
 
 function displaySignUp(){
 	togglePageManager('.signup-window');
@@ -80,18 +107,22 @@ function getFormData(data){
    $.map(data, function(n, i) {
     indexed_array[n['name']] = n['value'];
    });
-   console.dir(indexed_array);
+  // console.dir(indexed_array);
    return indexed_array;
 }
 
 function generateUserToken(data) {
+	//console.dir(data);
 	sessionStorage.setItem("tokenKey", data.authToken);
-	togglePageManager('.container-meditate');
+	sessionStorage.setItem("userId", JSON.stringify(data.user._id));
+	//user = data.user;
+	meditationPage();
 }
 
 function logoutUser(){
-	alert("hello");
+	//alert("hello");
 	sessionStorage.removeItem('tokenKey');
+	sessionStorage.removeItem('userId');
 	togglePageManager('.container-home');
 }
 
@@ -103,40 +134,62 @@ function handleChallengeSignUp(){
 	const month = monthNames[new Date().getMonth() + 1];
 	const text = "You will be signed up for " + month + " month's 21-day challenge.";
 	if(confirm(text)){
-		getUserObject(function(userObj){
-			if(userObj !== null){
-				userObj.isRegisteredForNextChallenge = true;
-				user = userObj;
-				console.dir(userObj);
+		getUserObject(function(user){
+			if(user !== null){				
+				user.isRegisteredForNextChallenge = true;
+				const challengeName = monthNames[new Date().getMonth() + 1] + "-" + new Date().getFullYear();
+				const regObject = {
+					challengeName: challengeName,
+					status: "Not started"
+				}
+				user.registeredChallenges.push(regObject);
 				//$.put(Users_Url, user, getChallengeObject);
 				//getChallengeObject();
+				console.dir(user);
+				user = user;
 				$.ajax({
-					url: Users_Url +"/" + userId,
+					url: Users_Url +"/" + JSON.parse(sessionStorage.getItem("userId")) ,
 					method: 'PUT',
-					data: JSON.stringify(userObj),
-					success: function(data){
-						getChallengeObject();
+					data: JSON.stringify(user),
+					success: function(data){						
+						getChallengeObject(user);
 					},
 					dataType: 'json',
-					contentType: 'application/json'
+					contentType: 'application/json',
+					beforeSend:function(xhr){
+						xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("tokenKey"));
+					}
 				});
 			}
 		});		
 	}
 }
 
-function getChallengeObject(){
-	//user = user;
-	//console.dir(user);
+function getChallengeObject(user){
+	user = user;
+	console.dir(user);
 	const challengeName = monthNames[new Date().getMonth() + 1] + "-" + new Date().getFullYear();
 	const url = Challenge_Url + "/" + challengeName;
 	console.log(url);
-	$.getJSON(url, updateChallenges);
+	//$.getJSON(url, updateChallenges);
+
+	$.ajax({
+		url: url,
+		method: "GET",
+		dataType: 'json',
+		contentType: 'application/json',
+		success: function(challenge){
+			updateChallenges(challenge, user);
+		},
+		beforeSend:function(xhr){
+			xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("tokenKey"));
+		}
+	});
 }
 
-function updateChallenges(challenge){
-	let challengeObject;
-	//console.dir(user);
+function updateChallenges(challenge, user){
+	//let challengeObject;
+	console.dir(user);
 	if(challenge === null){
 		const name = monthNames[new Date().getMonth() + 1] + "-" + new Date().getFullYear();
 		const usersArray = [];
@@ -160,7 +213,10 @@ function updateChallenges(challenge){
 				alert("You are signed up.");
 			},
 			dataType: 'json',
-			contentType:'application/json'
+			contentType:'application/json',
+			beforeSend:function(xhr){
+				xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("tokenKey"));
+			}
 		});
 		
 	} else{
@@ -168,14 +224,17 @@ function updateChallenges(challenge){
 		//challengeObject = challenge;
 
 		$.ajax({
-			url :Challenge_Url + "/" + challenge.name,
+			url :Challenge_Url + "/" + challenge._id,
 			method: "PUT",
 			data : JSON.stringify(challenge),
 			success : function(data){
 				alert("User signed up");
 			},
 			dataType : 'json',
-			contentType: 'application/json'
+			contentType: 'application/json',
+			beforeSend:function(xhr){
+				xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("tokenKey"));
+			}
 		}); 
 	}
 
@@ -197,13 +256,15 @@ function meditationPage(){
 }
 
 function populateAudioFiles(audios){
+	$(".audio-container").html('');
 	for(let i=0;i<audios.length;i++){
 		let htmlString = `<div class="image-container">							
 							<img src='${audios[i].imageUrl}' 
 								alt="meditation audio" 
-								 class="meditation-audio"
-								data-audio='${JSON.stringify(audios[i])}' />
-								<span class="js-text">${audios[i].name}</span>														
+								class="meditation-audio" />
+							<span class="js-text"
+							 data-audio='${JSON.stringify(audios[i])}'>
+							 ${audios[i].name}</span>														
 						  </div>`;		
 		$('.audio-container').append(htmlString);
 	}	
@@ -220,29 +281,78 @@ function displayMeditationWindow(event){
 	//audio[0].oncanplaythrough = audio[0].play();
 	$(audio[0]).on("ended", meditationComplete);
 }
-
+/*
+function setProgress(percent) {
+  const offset = circumference - percent / 100 * circumference;
+  circle.style.strokeDashoffset = offset;
+}
+*/
 function meditationComplete(){
 	$(this).currentTime = 0;
 	console.log("ended");
-	//updateUserData();
-	getUserObject(updateUserData);
+	updateUserData();
+	//getUserObject(updateUserData);
+	console.dir(user);
+	saveUserObject();	
 }
 
-function updateUserData(user){
-	console.dir(user);
-	if(user !== null){
-		user.numberOfDaysMeditated += 1;
-		//checkStreak(user.lastMeditated);
-		if(checkStreak(user.lastMeditated)){
-			user.streak += 1;
-			checkAndUpdateBadges(user);
-		}else{
-			if(user.registeredForCurrentChallenge){
-				user.active = false;
-			}
-		}
-		user.lastMeditated = formatDate(new Date());
+function saveUserObject(){
+	$.ajax({
+		url: Users_Url + "/" + user._id,
+		method: "PUT",
+		dataType: 'json',
+		contentType: 'application/json',
+		data : JSON.stringify(user),
+		success : function(){
+			alert("User updated");
+			meditationPage();
 
+		},
+		error: function(err){
+			console.error(err);
+			alert("Unable to update user.");
+		},
+		beforeSend:function(xhr){
+			xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("tokenKey"));
+		}
+	});
+}
+
+function updateUserData(){	
+	if(user !== null){
+		if(user.lastMeditated !== formatDate(new Date())){
+			if(user.lastMeditated === undefined){
+				user.lastMeditated = formatDate(new Date());
+				user.streak = 1;
+				user.numberOfDaysMeditated = 1;
+				if(user.registeredForCurrentChallenge && Date().getDate() === 1){
+					user.active = true;
+				}
+			} else{
+				user.numberOfDaysMeditated += 1;
+				if(checkStreak(user.lastMeditated)){
+					user.streak += 1;
+					if(user.registeredForCurrentChallenge && user.active){
+						user.active = true;
+					}else{
+						user.active = false;
+					}
+					checkAndUpdateBadges(user);
+				}else{
+					user.streak = 1;
+					if(user.registeredForCurrentChallenge){
+						if(Date().getDate === 1){
+							user.active = true;
+						}else{
+							user.active = false;
+						}					
+					}
+				}
+			}	
+		}						
+	}else{
+		alert("Please login before you meditate");
+		togglePageManager('login-window');
 	}	
 }
 
@@ -253,14 +363,16 @@ function checkAndUpdateBadges(user){
 		const name = user.streak + '-day';
 		let url = Badge_Url + "/" + name;
 		$.getJSON(url, function(badge){
-			user.badges.push(badge);
+			if(badge !== null){
+				user.badges.push(badge);
+			}			
 		});
 	}			
 }
 
 function checkStreak(lastMeditated){
-	console.log(new Date(lastMeditated));
-	console.log(new Date());
+	//console.log(new Date(lastMeditated));
+	//console.log(new Date());	
 	const date1 = Date.parse(lastMeditated);
 	const date2 = Date.parse(formatDate(new Date()));
 	const diff = parseInt(date2 - date1);
@@ -286,12 +398,29 @@ function formatDate(dateString){
 	return formattedDate;
 }
 
+
 function getUserObject(callBack){
-	const url = Users_Url + "/" + userId;
-	$.getJSON(url, function(user){
-		callBack(user);
-	}); 		
+	const url = Users_Url + "/" + JSON.parse(sessionStorage.getItem("userId"));
+	console.log(url);
+	$.ajax({
+		url:url,
+		dataType:'json',
+		method: 'GET',
+		success: function(user){
+			user = user;
+			callBack(user);			
+		},
+		contentType: 'application/json',
+		error: function(err){
+			console.error(err);
+		},
+		beforeSend:function(xhr){
+			xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("tokenKey"));
+		}
+	});
+
 }
+
 
 function challengeReport(){
 	//$('.container-challenge').show();
@@ -371,11 +500,19 @@ function createHeader(){
 function displayDashboard(){
 	//alert("hi");
 	togglePageManager('.container-dashboard');
-	const resourceURL = Users_Url + "/" + userId;
-	$.getJSON(resourceURL, function(user){
+	//const resourceURL = Users_Url + "/" + userId;
+	if(user === null){
+		getUserObject(populateDashboard);
+		//console.dir(user);
+	}else{
+		populateDashboard(user);
+	}
+	/*$.getJSON(resourceURL, function(user){
 		console.dir(user);
 		populateDashboard(user);
-	});
+	}); */
+
+	//populateDashboard();
 	
 }
 
@@ -398,10 +535,14 @@ function togglePageManager(pageName){
 }
 
 function populateDashboard(user){
-
+	console.dir(user);
+	$('.badgesDiv').html('');
 	for(let i=0;i<user.badges.length;i++){
-		let htmlString = "<div class='badgeClass'><img src='" + user.badges[i].imageUrl + "' alt='badge image' /><span>" + user.badges[i].name + "</span></div>";
+		let htmlString = "<div class='badge-div'><div class='badgeClass'><img src='" + user.badges[i].imageUrl + "' alt='badge image' /></div><span>" + user.badges[i].name + "</span></div>";
 		$('.badgesDiv').append(htmlString);
+	}
+	if(user.badges.length === 0){
+		$('.badgesDiv').html('<p>No badges earned so far.</p>');
 	}
 
 	$('.streakCls').first().find('span').text(user.streak);
@@ -472,6 +613,7 @@ const dashboardData = {
 	numberOfDaysMeditated: 15
 };
 */
+/*
 const challengeData = {
 	registeredUsers:[{
 		userId: '111',
@@ -507,6 +649,7 @@ const challengeData = {
 	startDate: '01-01-2018',
 	endDate: '01-21-2018'
 }; 
+*/
 /*
 const audioData = [{
 	name: 'Relaxation Meditations',

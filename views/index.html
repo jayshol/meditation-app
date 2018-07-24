@@ -2,11 +2,12 @@
 <html lang="en">
 <head>
 	<title>Meditation App</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
 	<link rel="stylesheet" href="/style.css">
 </head>
 <body>
-	<div class="container">
-		<div class="navigation">
+	<div class="container">		
+		<!--<div class="navigation">
 			<ul>
 			  <li class='js-displaySignup'>Sign Up</li>
 			  <li class="js-displayLogin">Login</li>
@@ -14,8 +15,23 @@
 			  <li id="challengeBtn">21 Day Challenge</li>
 			  <li id="meditate-btn">Meditate</li>
 			  <li class="js-logoutBtn">Logout</li>
-			</ul>
+			</ul> 			
+		</div>-->
+		<div class="navbar">		  		
+		  <div class="dropdown">
+		    <button class="dropbtn">User
+		      <i class="fa fa-caret-down"></i>
+		    </button>
+		    <div class="dropdown-content" id="myDropdown">
+		      <a href="#" id="dashboardBtn">Dashboard</a>
+		      <a href="#" id="meditate-btn">Meditation</a>
+		      <a href="#" class="js-logoutBtn">LogOut</a>
+		    </div>
+		  </div>
+		  <a href="#" id="challengeBtn">21-Day Challenge</a>
+		  <a href="#" id="homeBtn">Home</a> 
 		</div>
+
 		<main>
 			<div class="container-home">
 				<header>
@@ -29,7 +45,7 @@
 			</div>
 			<div class="signup-window">				
 				<form role="form" class="signUpForm">
-					<fieldset>
+					<fieldset id="signUp-form">
 						<legend>
 							Sign Up
 						</legend>
@@ -67,10 +83,14 @@
 			</div>
 			<div class="container-dashboard">
 				<h1>Dashboard</h1>
-				<p class="streakCls">Currently running a :<span></span> day streak.</p>
-				<p class="streakCls">Number of days meditated :<span></span> days.</p>
-				<p class="challengeCls">You are registered for 21-day challenge</p>
-				<p class="challengeCls js-challenge"></p>				
+				<div class="js-data">
+					<p class="streakCls">Currently running a :<span></span> day streak.</p>
+					<p class="streakCls">Number of days meditated :<span></span> days.</p>
+					<p class="challengeCls">You are registered for 21-day challenge</p>
+					<p class="challengeCls js-challenge js-nextChallenge"></p>
+					<h2>Badges :</h2>
+				</div>
+								
 				<div class="badgesDiv"></div>
 				<div class="achievements">					
 					<div class="registered">

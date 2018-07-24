@@ -3,7 +3,7 @@
 	box-sizing: border-box;
 }
 html, body{
-	height: 90vh;
+	height: 80vh;
 	margin:0;
 	padding:0;
 }
@@ -21,7 +21,7 @@ header{
 main{
 	width:100%;
 	/*border: 2px solid green;*/
-	height: 90vh;
+	height: 80vh;
 	margin:50px 0 0 0; 
 	padding:0;
 }
@@ -41,11 +41,16 @@ main{
 }
 
 .container-dashboard{
-	width:100%;
-	height:100%;	
-	background-color: white;
-	margin: 0 0 0 0;
-	padding:0;
+	width:90%;
+	height:auto;	
+	background-color: rgba(0,0,0,.5);
+	margin: 60px auto 0 auto;
+	padding:15px;
+	color: white;		
+}
+
+.container-dashboard > h1{
+	text-align: center;
 }
 
 .buttonDivCls{
@@ -109,73 +114,94 @@ li {
     cursor: pointer;
 }
 
-.badgeClass{
-	display: inline-block;
-	height: 100px;
-	width: 140px;
+.badgeClass{	
+	height: 120px;
+	width: 150px;
 	border: 1px solid black;
 	border-radius: 50%;
+	overflow: hidden;	
 }
 
 .badgeClass > img{
-	height: 90px;
-	width: 100px;
+	height: 100%;
+	width: 100%;
 }
 
 .badgeClass>span{
 	display:block;
+	color:white;
+	font-size: 14px;
+	height: 10px;	
 }
 .badgesDiv{
 	width: 90%;
-	border: 1px solid black;
+	height:auto;
+	border: 1px solid white;
 	border-radius: 5px;
 	margin: 15px auto 15px auto;
+	padding: 15px;
 
 }
+
+.badge-div{
+	height: auto;
+	width:155px;	
+	display:inline-block;
+	text-align: center;
+}
+
 .streakCls{
 	font-size: 18px;
-	color:black;
-	text-align: left;
-	font-weight: bold;
-
+	color:white;
+	text-align: left;	
 }
 
 .streakCls > span{
-	color: green;
+	color: yellow;
 	font-size: 20px;
 	font-weight: bold;
 	font-style: italic;
 }
 
 .challengeCls {
-	color: black;
+	color: white;
 	font-size: 18px;
-	font-weight: bold;
-	font-style: italic;
+	font-weight: bold;	
+}
+
+.js-challenge{
+	animation: blink 3s linear infinite;
 }
 
 .registered{
 	display: inline-block;
 	height: 120px;
-	width:30%;
+	width:49.5%;
 	border: 1px solid;
+	padding:15px;
 }
 
 .completed{
 	display:inline-block;
 	border: 1px solid;
 	height: 120px;
-	width:30%;
+	width:49.5%;
+	padding:15px;
 }
 
 .registered > div , .completed>div{
-	display:inline-block;
+	display:inline-block;	
 }
 
 .achievements{
 	margin: 0 auto;
 	width: 90%;
 	height:auto;
+}
+.js-data{
+	width:90%;
+	margin: 0 auto;
+	height: auto;
 }
 
 h3{
@@ -339,7 +365,7 @@ h3{
 .audioTagClass{
 	height: 200px;
 	width: 300px;
-	border: 1px solid white;	
+	/*border: 1px solid white;	*/
 	display: inline-block;
 	/*margin: 0 auto;	*/
 	line-height: 200px;
@@ -355,7 +381,7 @@ h3{
 .signup-window, .login-window {
 	width: 50%;
 	height: 50%;
-	margin:100px auto 0 auto;
+	margin:150px auto 0 auto;
 	color: white;
 	font-size: 20px;
 }
@@ -372,3 +398,137 @@ h2.textClass{
 	font-size: 30px;
 	color: #FFD368;
 }
+
+
+/*progress circle */
+
+.progress-ring {
+  
+}
+
+.progress-ring__circle {
+  transition: 0.35s stroke-dashoffset;
+  // axis compensation
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+}
+
+/* progress circle */
+
+/* sign up */
+
+.signUpForm, .loginForm {
+	width: 350px;
+	height: 350px;
+	margin: 0 auto;
+	padding: 35px 15px 35px 15px;	
+}
+
+fieldset{
+	
+  padding: 25px;
+  border:0;
+
+}
+
+legend{
+  font-size: 25px;
+  font-weight: 300;
+  margin: 0 auto 45px;
+  width:100%;
+  text-align:center;
+  color: white;
+}
+
+input{
+	font-size: 20px;
+	margin-top:10px;
+}
+label{
+	font-size: 18px;
+	font-weight: bold;
+}
+
+.signUpForm > button{
+	height: 35px;
+	width: 100px;
+	margin-top: 20px;
+	font-size: 16px;
+	font-weight: bold;
+}
+
+/*    */
+.navbar {
+    overflow: hidden;
+  /*  background-color: #68051a;*/
+    font-family: Arial, Helvetica, sans-serif;
+    height: 50px;    
+}
+
+.navbar a {
+    float: right;
+    font-size: 16px;
+    color: white;
+    text-align: center;
+    padding: 10px 14px;
+    text-decoration: none;
+    margin:5px;
+    border: 1px solid transparent;
+    border-radius: 15px;
+}
+
+.dropdown {
+    float: right;
+    overflow: hidden;    
+}
+
+.dropdown .dropbtn {
+    cursor: pointer;
+    font-size: 16px;    
+    border: none;
+    outline: none;
+    color: white;
+    padding: 10px 14px;
+    background-color: inherit;
+    font-family: inherit;
+    margin: 5px;
+    border: 1px solid transparent;
+    border-radius: 15px;
+}
+
+.navbar a:hover, .dropdown:hover .dropbtn, .dropbtn:focus {
+   /* background-color: red;*/
+   border: 1px solid #FFD368;
+}
+
+.dropdown-content {
+    display: none;
+    right:5px;
+    position: absolute;
+   /* background-color: #f9f9f9;*/
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    border: 1px solid #FFD368;
+    border-radius: 15px;
+}
+
+.dropdown-content a {
+    float: none;
+    color: white;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+}
+
+.dropdown-content a:hover {
+    background-color: #FFD368;
+	color: #68051a;   
+}
+
+.show {
+    display: block;
+}
+
+/*   */
