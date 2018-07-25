@@ -3,7 +3,7 @@
 	box-sizing: border-box;
 }
 html, body{
-	height: 70vh;
+	height: 100%;
 	margin:0;
 	padding:0;
 }
@@ -21,9 +21,10 @@ header{
 main{
 	width:100%;
 	/*border: 2px solid green;*/
-	height: 70vh;
-	margin:50px 0 0 0; 
+	height: 100%;
+	margin:0; 
 	padding:0;
+	/*border: 3px solid green;*/
 }
 
 .container{
@@ -31,6 +32,7 @@ main{
 	height: auto;
 	margin:0;
 	padding:0;
+	/*border: 3px solid white;*/
 }
 
 .container-home{
@@ -533,22 +535,51 @@ label{
 
 /*   */
 
-.navbarHolder{
+.navbarHolder, #playerHolder{
 	height: 15px;
 	width: 80px;
 	border: 1px solid #FFD368;
 	display:block;
 	margin: 0 auto;
-	background-color: #FFD368;
-	border-bottom-left-radius: 15px;
-	border-bottom-right-radius: 15px;
+	background-color: #FFD368;	
 	text-align: center;
 	line-height: 15px;
 	font-size: 0;
+	cursor:pointer;	
 }
+
+.navbarHolder{
+	border-bottom-left-radius: 15px;
+	border-bottom-right-radius: 15px;	
+}
+
+#playerHolder{
+	border-top-left-radius: 15px;
+	border-top-right-radius: 15px;
+	position:fixed;
+	bottom: 150px;
+	right:0;
+	left:0;
+}
+
 
 .fa-ellipsis-h{	
 	font-size: 16px;
+}
+
+/*  */
+.playerDiv{
+	height: 150px;
+	width: 500px;
+	border: 1px solid white;
+	margin:0 auto;
+	right: 0;
+    left: 0;
+    bottom: 0px;
+    position:fixed;
+    display:flex;
+    border-top-right-radius:200px;
+    border-top-left-radius:200px;
 }
 
 

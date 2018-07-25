@@ -53,10 +53,22 @@ function handleNavigationClicks(){
 
 	$(".navbarHolder").click(toggleNavbar);
 	$(".navbarHolder").hide();
+	$("#playerHolder").click(togglePlayer);
 }
 
 function myFunction() {
     $("#myDropdown").toggleClass("show");
+}
+
+function togglePlayer(){	
+	$('.playerDiv').slideToggle("slow");
+	if($("#playerHolder").css('bottom') == '0px'){
+	  $("#playerHolder").animate({bottom:'150px'},505);	  
+	}
+	else
+	{
+	  $("#playerHolder").animate({bottom:'0px'},505);	  
+	}  
 }
 
 function toggleNavbar(){
