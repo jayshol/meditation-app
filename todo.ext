@@ -1,0 +1,16 @@
+Work on the meditation page styling
+Make the navbar slide in meditation page -done.
+Create a new challenge object.
+update user object to show the change in challenge object
+Clean up the api's.
+Check the flow
+Change the navigation after user login.
+Work on dashboard a little.
+Fill mock data and check 21 day challenge.
+Make the badges have transparent background.
+Create mlab login and change everything.
+create tests and host in heroku.
+documentation (readme file).
+Add animation to open the meditation page.
+fix the background image repeat error.
+Clean the code.

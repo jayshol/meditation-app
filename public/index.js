@@ -50,10 +50,17 @@ function handleNavigationClicks(){
 	});
 
 	$('.dropbtn').click(myFunction);
+
+	$(".navbarHolder").click(toggleNavbar);
+	$(".navbarHolder").hide();
 }
 
 function myFunction() {
     $("#myDropdown").toggleClass("show");
+}
+
+function toggleNavbar(){
+	$('.navbar').slideToggle('slow');
 }
 
 // Close the dropdown if the user clicks outside of it
