@@ -6,17 +6,7 @@
 	<link rel="stylesheet" href="/style.css">
 </head>
 <body>
-	<div class="container">		
-		<!--<div class="navigation">
-			<ul>
-			  <li class='js-displaySignup'>Sign Up</li>
-			  <li class="js-displayLogin">Login</li>
-			  <li id="dashboardBtn">Dashboard</li>
-			  <li id="challengeBtn">21 Day Challenge</li>
-			  <li id="meditate-btn">Meditate</li>
-			  <li class="js-logoutBtn">Logout</li>
-			</ul> 			
-		</div>-->
+	<div class="container">				
 		<div class="navbar">		  		
 		  <div class="dropdown">
 		    <button class="dropbtn">User
@@ -29,9 +19,9 @@
 		    </div>
 		  </div>
 		  <a href="#" id="challengeBtn">21-Day Challenge</a>
-		  <a href="#" id="homeBtn">Home</a>
-		  <a href="#" class="js-displaySignup">SignIn</a>
-		  <a href="#" class="js-displayLogin">LogIn</a> 
+		  <a href="#" class="js-displayLogin">LogIn</a>
+		  <a href="#" class="js-displaySignup">SignIn</a>		  
+		  <a href="#" id="homeBtn">Home</a> 
 		</div>
 		<div class="navbarHolder"><i class="fa fa-ellipsis-h"></i></div>
 		<main>
@@ -39,10 +29,10 @@
 				<header>
 					<h1>Focus</h1>
 				</header>
-				<p>Meditate. Let the light of the heart engulf you.</p>
+				<p class="captionCls">Meditate. Let the light of the heart engulf you.</p>
 				<div class="buttonDivCls">
 					<button id="signUp" name="signUp" class="buttonCls">Sign Up</button>
-					<button id="login" name="login" class="buttonCls">Login</button>
+					<button id="loginBtn" name="loginBtn" class="buttonCls">Login</button>
 				</div>
 			</div>
 			<div class="signup-window">				
@@ -53,11 +43,11 @@
 						</legend>
 						<div>
 						<label for="userName">UserName: </label>
-						<input type="text" name="userName" required value="monkey" />
+						<input type="text" name="userName" required />
 					</div>
 					<div>
 						<label for="password">Password: </label>
-						<input type="password" name="password" required value="monkey123"/>
+						<input type="password" name="password" required />
 					</div>
 					<div>
 						<button type="submit">Sign Up</button>
@@ -71,11 +61,11 @@
 						<legend>Login</legend>
 						<div>
 							<label for="username">UserName :</label>
-							<input type="text" name="username"  required />
+							<input type="text" name="username"  required value="monkey" />
 						</div>
 						<div>
 							<label for="password">Password</label>
-							<input type="password" name="password"  required />
+							<input type="password" name="password"  required value="monkey123" />
 						</div>
 						<div>
 							<button type="submit">Login</button>
@@ -88,8 +78,8 @@
 				<div class="js-data">
 					<p class="streakCls">Currently running a :<span></span> day streak.</p>
 					<p class="streakCls">Number of days meditated :<span></span> days.</p>
-					<p class="challengeCls">You are registered for 21-day challenge</p>
-					<p class="challengeCls js-challenge js-nextChallenge"></p>
+					<p id="signedUp" class="challengeCls">You are registered for 21-day challenge</p>
+					<p id="notSigned" class="challengeCls js-challenge js-nextChallenge">Sign up for next month's 21 day challenge</p>
 					<h2>Badges :</h2>
 				</div>
 								
@@ -119,21 +109,19 @@
 				</div>
 			</div>
 			<div class="meditation-window">
-				<div class="centerClass">
-					<h2 class="textClass">Start your Meditation</h2>
-					<div class="audioTagClass">
-						<audio controls="controls" id="player">
-							<source id="audio-src" src="">
-								Your browser does not support audio tag.
-						</audio>						
-					</div>					
+				<div class="centerClass">														
 				</div>
 			</div>
 			<div id="playerHolder">
 				<i class="fa fa-ellipsis-h"></i>
 			</div>
-			<div class="playerDiv">
-				
+			<div class="playerDiv">				
+				<div class="audioTagClass">					
+					<audio controls="controls" id="player">
+						<source id="audio-src" src="">
+							Your browser does not support audio tag.
+					</audio>						
+				</div>											
 			</div>			
 		</main>			
 	</div>	

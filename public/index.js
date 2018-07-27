@@ -28,6 +28,8 @@ function handleNavigationClicks(){
 	$('#meditate-btn').click(meditationPage);
 	$('.audio-container').on("click", ".js-text", displayMeditationWindow);
 	$('.js-nextChallenge').click(handleChallengeSignUp);
+	$('#signUp').click(displaySignUp);
+	$('#loginBtn').click(displayLogin);
 	$('#homeBtn').click(function(){
 		togglePageManager('.container-home');
 	});
@@ -52,9 +54,31 @@ function handleNavigationClicks(){
 	$('.dropbtn').click(myFunction);
 
 	$(".navbarHolder").click(toggleNavbar);
-	$(".navbarHolder").hide();
+	//$(".navbarHolder").hide();
 	$("#playerHolder").click(togglePlayer);
+	//$("#playerHolder").hide();
+	//$('.playerDiv').hide();
+	manageNavBeforeLogin();
 }
+
+function manageNavBeforeLogin(){
+	$('.dropdown').hide();
+	$('#challengeBtn').hide();
+	$('.js-displaySignup').show();
+	$('.js-displayLogin').show();
+	$('#signUp').show();
+	$('#loginBtn').show();
+}
+
+function manageNavAfterLogin(){
+	$('.dropdown').show();
+	$('#challengeBtn').show();
+	$('.js-displaySignup').hide();
+	$('.js-displayLogin').hide();
+	$('#signUp').hide();
+	$('#loginBtn').hide();
+}
+
 
 function myFunction() {
     $("#myDropdown").toggleClass("show");
@@ -131,11 +155,13 @@ function getFormData(data){
 }
 
 function generateUserToken(data) {
-	//console.dir(data);
+	//cdisplayDashboard();onsole.dir(data);
 	sessionStorage.setItem("tokenKey", data.authToken);
 	sessionStorage.setItem("userId", JSON.stringify(data.user._id));
 	//user = data.user;
-	meditationPage();
+	//meditationPage();
+	manageNavAfterLogin();
+	displayDashboard();
 }
 
 function logoutUser(){
@@ -143,6 +169,7 @@ function logoutUser(){
 	sessionStorage.removeItem('tokenKey');
 	sessionStorage.removeItem('userId');
 	togglePageManager('.container-home');
+	manageNavBeforeLogin();
 }
 
 function userSignedUp(data){
@@ -154,13 +181,18 @@ function handleChallengeSignUp(){
 	const text = "You will be signed up for " + month + " month's 21-day challenge.";
 	if(confirm(text)){
 		getUserObject(function(user){
-			if(user !== null){				
+			if(user !== null){
 				user.isRegisteredForNextChallenge = true;
 				const challengeName = monthNames[new Date().getMonth() + 1] + "-" + new Date().getFullYear();
 				const regObject = {
 					challengeName: challengeName,
 					status: "Not started"
 				}
+		/*		if(! checkIfAlreadySignedUp(challengeName, user)){
+
+				}else{
+					alert("You have already signed up.")
+				}*/
 				user.registeredChallenges.push(regObject);
 				//$.put(Users_Url, user, getChallengeObject);
 				//getChallengeObject();
@@ -230,6 +262,7 @@ function updateChallenges(challenge, user){
 			data: JSON.stringify(newObject),
 			success: function(){
 				alert("You are signed up.");
+				displayDashboard();
 			},
 			dataType: 'json',
 			contentType:'application/json',
@@ -241,7 +274,7 @@ function updateChallenges(challenge, user){
 	} else{
 		challenge.registeredUsers.push(user);
 		//challengeObject = challenge;
-
+		console.dir(challenge);
 		$.ajax({
 			url :Challenge_Url + "/" + challenge._id,
 			method: "PUT",
@@ -253,6 +286,9 @@ function updateChallenges(challenge, user){
 			contentType: 'application/json',
 			beforeSend:function(xhr){
 				xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("tokenKey"));
+			},
+			error: function(err){
+				console.error(err);
 			}
 		}); 
 	}
@@ -283,7 +319,7 @@ function populateAudioFiles(audios){
 								class="meditation-audio" />
 							<span class="js-text"
 							 data-audio='${JSON.stringify(audios[i])}'>
-							 ${audios[i].name}</span>														
+							 <p>${audios[i].name}</p></span>														
 						  </div>`;		
 		$('.audio-container').append(htmlString);
 	}	
@@ -291,6 +327,10 @@ function populateAudioFiles(audios){
 
 function displayMeditationWindow(event){
 	togglePageManager('.meditation-window');
+//	$('.navbarHolder').show();
+//	$('#playerHolder').show();
+//	$('.playerDiv').show();
+	$('.meditation-window').addClass("backgroundClass");
 	const dataObj = $(event.target).data("audio");
 	$('.meditation-window').find('h2').text(dataObj.name);
 	const audio = $('#player');
@@ -442,11 +482,28 @@ function getUserObject(callBack){
 
 
 function challengeReport(){
+	/*
 	//$('.container-challenge').show();
 	togglePageManager('.container-challenge');
-	sortChallengeData();
-	displayUsers();
-	displayChallengeData();
+	const challengeName = monthNames[new Date().getMonth()] + "-" + new Date().getFullYear();
+	const url = Challenge_Url + "/" + challengeName;
+	$.ajax({
+		url: url,
+		method: "GET",
+		dataType: 'json',
+		contentType: 'application/json',
+		success: handleData,
+		beforeSend: beforeSend:function(xhr){
+			xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("tokenKey"));
+		}
+	})
+/*	*/
+}
+
+function handleData(challenge){
+	sortChallengeData(challenge);
+	displayUsers(challenge);
+	displayChallengeData(challenge);
 }
 
 function displayChallengeData(){
@@ -535,7 +592,18 @@ function displayDashboard(){
 	
 }
 
-function togglePageManager(pageName){	
+function togglePageManager(pageName){
+	
+	if(pageName !== '.meditation-window'){
+		$('.navbarHolder').hide();
+		$('#playerHolder').hide();
+		$('.playerDiv').hide();
+	}else{
+		$('.navbarHolder').show();
+		$('#playerHolder').show();
+		$('.playerDiv').show();
+	}
+
 	const pageNames = ['.container-home', 
 					   '.container-dashboard', 
 					   '.container-challenge', 
@@ -548,7 +616,8 @@ function togglePageManager(pageName){
 		if(pageNames[i] !== pageName) {			
 			$(pageNames[i]).hide();
 		}		
-	}
+	}	
+
 	$(pageName).show();
 
 }
@@ -573,20 +642,31 @@ function populateDashboard(user){
 		$('.challengeCls').first().hide();
 	}
 
-	const str = (user.isRegisteredForNext === 'yes')? 'You are signed up for Next month\'s 21 day challenge': 'Sign up for next month\'s 21 day challenge.';
+	if(user.isRegisteredForNextChallenge){
+		$('#signedUp').show();
+		$('#notSigned').hide();
+	} else{
+		$('#signedUp').hide();
+		$('#notSigned').show();
+	}
 
-	$('.js-challenge').text(str); 	
+	//$('.js-challenge').text(str); 	
 
-	//fillAchievements('.registered', user.registeredChallenges);
+	fillAchievements(user.registeredChallenges);
 	//fillAchievements('.completed', user.completedChallenges);
 	
 }
 
-function fillAchievements(className, array){
+function fillAchievements( array){
+	$('.registered').find("div").html('');
+	$('.completed').find("div").html('');
 	for(let i=0;i<array.length;i++){
-		const dateObj = new Date(array[i].endDate);
-		const str = '<span class="dateClass">' + monthNames[dateObj.getMonth()] + ", " + dateObj.getFullYear() + '</span>&nbsp;&nbsp;';
-		$(className).find('div').append(str);		
+		const str = '<span class="dateClass">' + array[i].challengeName + '</span>&nbsp;&nbsp;';
+		if(array[i].status === "completed"){
+			$('.completed').find('div').append(str);
+		}else{
+			$('.registered').find('div').append(str);
+		}				
 	}
 }
 

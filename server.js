@@ -147,7 +147,7 @@ app.put('/challenges/:id', jwtAuth, (req, res)=> {
 	});
 	console.log(toUpdate);
 	Challenge
-	.findByIdAndUpdate(res.body._id, { $set: toUpdate})
+	.findByIdAndUpdate(req.body._id, { $set: toUpdate})
 	.then(challenge => res.status(204).end())
 	.catch(err => res.status(500).json({message: err.message}));
 });
