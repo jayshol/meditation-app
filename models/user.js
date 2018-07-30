@@ -9,14 +9,13 @@ mongoose.Promise = global.Promise;
 const userSchema = mongoose.Schema({
 	userName: {type: String, required: true, unique:true},
 	password: {type: String, required: true},
-	registeredForCurrenttChallenge : {type:Boolean},
+	registeredForCurrentChallenge : {type:Boolean},
 	lastMeditated: {type:Date},
-	streak: {type: Number},
-	active:{type:Boolean},
+	streak: {type: Number},	 
 	isRegisteredForNextChallenge:{type:Boolean},
 	numberOfDaysMeditated: {type:Number},
 	badges:[{type:Schema.Types.ObjectId, ref:"Badge"}],
-	registeredChallenges:[{challengeName: {type:String}, status:{type:String}}]
+	registeredChallenges:[{challengeName: {type:String}, status:{type:String},active:{type:Boolean}, lastMeditated:{type:Date}}]
 });
 
 userSchema.methods.serialize = function(){

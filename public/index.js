@@ -32,15 +32,7 @@ function handleNavigationClicks(){
 	$('#loginBtn').click(displayLogin);
 	$('#homeBtn').click(function(){
 		togglePageManager('.container-home');
-	});
-	/*$(".audio-container").on("mouseover",".image-container", function(event){
-		//console.log("hi");
-		$(this).animate({height: "150px", width:"150px", opacity: 0.25}, 200);
-	});
-	$(".audio-container").on("mouseout",".image-container", function(event){
-		//console.log("hi");
-		$(this).animate({height: "120px", width:"120px", opacity: 1}, 200);
-	});*/
+	});	
 	togglePageManager('.container-home');
 	$(window).click(function(e) {
 	  if (!e.target.matches('.dropbtn')) {
@@ -58,6 +50,11 @@ function handleNavigationClicks(){
 	$("#playerHolder").click(togglePlayer);
 	//$("#playerHolder").hide();
 	//$('.playerDiv').hide();
+
+	$('.playBtnClass').click(playAudio);
+	$('.js-pause').click(pauseAudio);
+	$('.js-stop').click(stopAudio);
+
 	manageNavBeforeLogin();
 }
 
@@ -79,6 +76,21 @@ function manageNavAfterLogin(){
 	$('#loginBtn').hide();
 }
 
+function playAudio(){
+	$('#player')[0].play();
+}
+
+function pauseAudio(){
+	$('#player')[0].pause();
+}
+
+function stopAudio(){
+	if(confirm("Are you sure you want to stop this session?")){
+		const audio = $('#player')[0];
+		audio.pause();
+		audio.currentTime = 0;
+	}	
+}
 
 function myFunction() {
     $("#myDropdown").toggleClass("show");
@@ -87,7 +99,7 @@ function myFunction() {
 function togglePlayer(){	
 	$('.playerDiv').slideToggle("slow");
 	if($("#playerHolder").css('bottom') == '0px'){
-	  $("#playerHolder").animate({bottom:'150px'},505);	  
+	  $("#playerHolder").animate({bottom:'200px'},505);	  
 	}
 	else
 	{
@@ -317,9 +329,9 @@ function populateAudioFiles(audios){
 							<img src='${audios[i].imageUrl}' 
 								alt="meditation audio" 
 								class="meditation-audio" />
-							<span class="js-text"
-							 data-audio='${JSON.stringify(audios[i])}'>
-							 <p>${audios[i].name}</p></span>														
+							<span class="js-text">
+							 <p data-audio='${JSON.stringify(audios[i])}'>${audios[i].name}</p>
+							</span>														
 						  </div>`;		
 		$('.audio-container').append(htmlString);
 	}	
@@ -331,21 +343,24 @@ function displayMeditationWindow(event){
 //	$('#playerHolder').show();
 //	$('.playerDiv').show();
 	$('.meditation-window').addClass("backgroundClass");
+	console.log(event.target);
 	const dataObj = $(event.target).data("audio");
-	$('.meditation-window').find('h2').text(dataObj.name);
+	//$('.meditation-window').find('h2').text(dataObj.name);
 	const audio = $('#player');
 	$('#audio-src').attr("src", dataObj.url);
 	audio[0].pause();
 	audio[0].load();
+	$('progress').value = 0;
 	//audio[0].oncanplaythrough = audio[0].play();
+	$(audio[0]).on("timeupdate", updateProgress);
 	$(audio[0]).on("ended", meditationComplete);
 }
-/*
-function setProgress(percent) {
-  const offset = circumference - percent / 100 * circumference;
-  circle.style.strokeDashoffset = offset;
+function updateProgress(){	
+	const audio = $('#player')[0];
+	//console.log($('progress').attr("value"));
+	$('progress').attr("value", Math.floor(audio.currentTime / audio.duration * 100));
 }
-*/
+
 function meditationComplete(){
 	$(this).currentTime = 0;
 	console.log("ended");
@@ -460,7 +475,7 @@ function formatDate(dateString){
 
 function getUserObject(callBack){
 	const url = Users_Url + "/" + JSON.parse(sessionStorage.getItem("userId"));
-	console.log(url);
+	//console.log(url);
 	$.ajax({
 		url:url,
 		dataType:'json',
@@ -482,10 +497,10 @@ function getUserObject(callBack){
 
 
 function challengeReport(){
-	/*
+	
 	//$('.container-challenge').show();
 	togglePageManager('.container-challenge');
-	const challengeName = monthNames[new Date().getMonth()] + "-" + new Date().getFullYear();
+	const challengeName = getCurrentChallengeName();
 	const url = Challenge_Url + "/" + challengeName;
 	$.ajax({
 		url: url,
@@ -493,63 +508,132 @@ function challengeReport(){
 		dataType: 'json',
 		contentType: 'application/json',
 		success: handleData,
-		beforeSend: beforeSend:function(xhr){
+		beforeSend:function(xhr){
 			xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("tokenKey"));
+		},
+		error:function(err){
+			console.err(err);
 		}
 	})
-/*	*/
+
 }
 
 function handleData(challenge){
-	sortChallengeData(challenge);
-	displayUsers(challenge);
-	displayChallengeData(challenge);
+	//console.log(challenge);
+	if(challenge !== null){	
+		sortChallengeData(challenge);
+		displayUsers(challenge);
+		displayChallengeData(challenge);
+	}else{
+		alert("Challenge is not available");
+	}
 }
 
-function displayChallengeData(){
+function displayChallengeData(challenge){
 	
 	const hbars = $('.hbar');
-	for(let i=0;i<challengeData.registeredUsers.length;i++){
-		const user = challengeData.registeredUsers[i];
-		const days_meditated = new Date(user.lastMeditated).getDate();
-		
+	for(let i=0;i<challenge.registeredUsers.length;i++){
+		const user = challenge.registeredUsers[i];
 		const elements = $(hbars[i+1]).find('.dayBarClass');
-		//alert(challengeData.registeredUsers.length);
-		for(let j=0;j<days_meditated;j++){
-			if(user.active){
-				$(elements[j]).css('background-color', "#FFD368");
-			}else{
-				$(elements[j]).css('background-color', "lightblue");
-			}
-			
-		}
-
-	}
+		
+		if(getLastMeditatedDate(user) !== undefined){
+			const lastMeditatedDate = new Date(user.lastMeditated);
+			const days_meditated = getLastMeditatedDate(user);
+			const month = getLastMeditatedMonth(user);
+			const year = getLastMeditatedYear(user);
+			//console.log(month + ' ' + new Date().getMonth());
+			//console.log(year + ' ' + new Date().getFullYear());
+			if(new Date().getMonth() === month && new Date().getFullYear() === year){
+				for(let j=0;j<days_meditated;j++){
+					//console.log(j);
+					if(user.active){
+						$(elements[j]).css('background-color', "#FFD368");
+					}else{
+						$(elements[j]).css('background-color', "lightblue");
+					}				
+				}
+			}					
+		}	
+	} 
 }
 
-function sortChallengeData(){
+function sortChallengeData(challenge){
 	function compare(a, b){
-		const aDate = new Date(a.lastMeditated).getDate();
-		const bDate = new Date(b.lastMeditated).getDate();
-		if(aDate < bDate){
-			return 1;
-		}
-		if(aDate > bDate){
-			return -1;
-		}
-		return 0;
-
+		
+		const aDate = getLastMeditatedDate(a);		
+		const bDate = getLastMeditatedDate(b);
+		if(a.lastMeditated !== undefined && b.lastMeditated !== undefined){
+			if(aDate < bDate){
+				return 1;
+			}
+			if(aDate > bDate){
+				return -1;
+			}
+			return 0;
+		}else{
+			if(a.lastMeditated === undefined && b.lastMeditated === undefined){
+				return 0;
+			}
+			if(a.lastMeditated === undefined){
+				return 1;
+			}else if(b.lastMeditated === undefined){
+				return -1;
+			}
+		}		
 	}
 
-	challengeData.registeredUsers.sort(compare);
+	challenge.registeredUsers.sort(compare);
 }
 
-function displayUsers(){
+function getLastMeditatedDate(user){
+	const challengeName = getCurrentChallengeName();
+	for(const i=0;i<user.registeredChallenges.length;i++){
+		if(user.registeredChallenges[i].challengeName === challengeName){
+			if(user.registeredChallenges[i].lastMeditated === undefined){
+				return undefined;
+			}else{
+				return new Date(user.registeredChallenges[i].lastMeditated).getDate();
+			}			
+		}
+	}
+}
+
+function getLastMeditatedYear(user){
+	const challengeName = getCurrentChallengeName();
+	for(const i=0;i<user.registeredChallenges.length;i++){
+		if(user.registeredChallenges[i].challengeName === challengeName){
+			if(user.registeredChallenges[i].lastMeditated === undefined){
+				return undefined;
+			}else{
+				return new Date(user.registeredChallenges[i].lastMeditated).getFullYear();
+			}			
+		}
+	}
+}
+
+function getLastMeditatedMonth(user){
+	const challengeName = getCurrentChallengeName();
+	for(const i=0;i<user.registeredChallenges.length;i++){
+		if(user.registeredChallenges[i].challengeName === challengeName){
+			if(user.registeredChallenges[i].lastMeditated === undefined){
+				return undefined;
+			}else{
+				return new Date(user.registeredChallenges[i].lastMeditated).getMonth();
+			}			
+		}
+	}
+}
+
+function getCurrentChallengeName(){
+	return monthNames[new Date().getMonth()] + "-" + new Date().getFullYear();
+}
+
+function displayUsers(challenge){
 	//console.dir(challengeData.registeredUsers);
 	let htmlString = "<div class='outerDiv'>";
 	htmlString += createHeader();
-	for(let i=0;i<challengeData.registeredUsers.length;i++){
-		const user = challengeData.registeredUsers[i];
+	for(let i=0;i<challenge.registeredUsers.length;i++){
+		const user = challenge.registeredUsers[i];
 		htmlString += `<div class="barDiv"><div class='nameDiv'>${user.userName}</div><div class='hbar'>`;
 		for(let i=0;i<21;i++){
 			let dayBar = '<div class="dayBarClass"></div>';
@@ -623,7 +707,7 @@ function togglePageManager(pageName){
 }
 
 function populateDashboard(user){
-	console.dir(user);
+	//console.dir(user);
 	$('.badgesDiv').html('');
 	for(let i=0;i<user.badges.length;i++){
 		let htmlString = "<div class='badge-div'><div class='badgeClass'><img src='" + user.badges[i].imageUrl + "' alt='badge image' /></div><span>" + user.badges[i].name + "</span></div>";
@@ -671,189 +755,8 @@ function fillAchievements( array){
 }
 
 const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-/*
-const dashboardData = {
-	userName: "xyz",
-	badges:[{
-		type: '3-day',
-		imageUrl: '/images/3-day-badge.jpg',		
-	},
-	{
-		type: '7-day',
-		imageUrl: '/images/7-day-badge.jpg',		
-	}],
-	streak : 5,
-	registeredChallenges:[{
-		registeredUsers :[10, 14, 12,80],
-		activeUsers:[14,12],
-		startDate: '01-01-18',
-		endDate: '01/21/2018'    
-	},
-	{
-		registeredUsers :[10, 14, 12,80],
-		activeUsers:[14,12],
-		startDate: '04-01-18',
-		endDate: '04/21/2018'    
-	}],
-	completedChallenges:[{
-		registeredUsers :[10, 14, 12, 80],
-		activeUsers:[14,12],
-		startDate: '01-01-17',
-		endDate: '01-21-17'    
-	},
-	{
-		registeredUsers :[10, 14, 12,80],
-		activeUsers:[14,12],
-		startDate: '01-01-18',
-		endDate: '01/21/2018'    
-	}],
-	isRegisteredForCurrent: 'yes',
-	isRegisteredForNext:'yes',
-	numberOfDaysMeditated: 15
-};
-*/
-/*
-const challengeData = {
-	registeredUsers:[{
-		userId: '111',
-		userName: 'aaaaa',
-		lastMeditated : '01-17-2018',
-		active: true		
-	},
-	{
-		userId: '222',
-		userName: 'bbbb',
-		lastMeditated : '01-13-2018',
-		active:false		
-	},
-	{
-		userId: '333',
-		userName: 'ccccc',
-		lastMeditated : '01-5-2018',
-		active:false		
-	},
-	{
-		userId: '444',
-		userName: 'dddd',
-		lastMeditated : '01-17-2018',
-		active:true		
-	},
-	{
-		userId: '555',
-		userName: 'eeee',
-		lastMeditated: '01-10-2018',
-		active:false
-	}
-	],	
-	startDate: '01-01-2018',
-	endDate: '01-21-2018'
-}; 
-*/
-/*
-const audioData = [{
-	name: 'Relaxation Meditations',
-	url:'/music/relaxationMeditation.mp3',
-	imageUrl:'/images/meditation1.jpg'
-}];
-*/
-/*
-const badges = [{
-	name: '3-day',
-	imageUrl:'/images/3-day-badge.jpg'
-},
-{
-	name: '7-day',
-	image:'/images/7-day-badge.jpg'
-},
-{
-	name: '14-day',
-	image:'/images/14-day-badge.jpg'
-},
-{
-	name: '30-day',
-	image:'/images/30-day-badge.jpg'
-},
-{
-	name: '21-day-badge',
-	image:'/images/21-day-badge.jpg'
-},
-{
-	name: '90-day',
-	image:'/images/90-day-badge.jpg'
-},
-{
-	name: '180-day',
-	image:'/images/180-day-badge.jpg'
-},
-{
-	name: 'gold',
-	image:'/images/gold-badge.jpg'
-}];
-*/
-/*
-const usersObj = [{
-	userId: '111',
-  userName: 'aaa',
-  password: 'xyz',
-  facebookId:  'xyz',
-  badges: [{
-		name: '3-day',
-		imageUrl: '/images/3-day-badge.jpg',		
-	}],
-  registeredForCurrentChallenge: true,
-  lastMeditated:'07/09/2018',
-  streak:  6,
-  firstName:'aaa',
-  lastName:'xyz',
-  registeredChallenges:[],
-  completedChallenges:[],
-  isRegisterednextChallenge:false,  
-  numberOfDaysMeditated: 17,
-  active: true
-},
-{
-	userId: '222',
-  userName: 'bbb',
-  password: 'abc',
-  facebookId: 'abc' ,
-  badges: [{
-		name: '3-day',
-		imageUrl: '/images/3-day-badge.jpg',		
-	}],
-  registeredForCurrentChallenge: false,
-  lastMeditated:'06/08/2018',
-  streak:  10,
-  firstName:'bbb',
-  lastName:'klm',
-  registeredChallenges:[],
-  completedChallenges:[],
-  isRegisterednextChallenge:false,  
-  numberOfDaysMeditated: 15,
-  active:false
-},
-{
-	userId: '333',
-  userName: 'ccc',
-  password:'xyz',
-  facebookId: 'xyz', 
-  badges: [{
-		type: '3-day',
-		imageUrl: '/images/3-day-badge.jpg',		
-	}],
-  registeredForCurrentChallenge: true,
-  lastMeditated:'07/02/2018',
-  streak:  7,
-  firstName:'ccc',
-  lastName:'mmm',
-  registeredChallenges:[],
-  completedChallenges:[],
-  isRegisterednextChallenge:false,  
-  numberOfDaysMeditated: 25,
-  active:true
-}];
-*/
 
-$(function(){
-	//alert("hello");
+
+$(function(){	
 	handleNavigationClicks();
 });

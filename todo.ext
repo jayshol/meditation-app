@@ -23,3 +23,4 @@ Add animation to open the meditation page.
 Clean the code.
 check for semantic html
 Account close button on dashboard
+increment streak through a query without passing a number.

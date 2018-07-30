@@ -102,6 +102,7 @@ app.get('/badges/:name', jwtAuth, (req, res) => {
 app.get('/challenges/:name', jwtAuth, (req, res) => {
 	Challenge
 	.findOne({name: req.params.name})
+	.populate('registeredUsers')
 	.then(challenge => res.json(challenge))
 	.catch(err => {
 		console.log(err);

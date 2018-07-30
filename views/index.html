@@ -117,11 +117,19 @@
 			</div>
 			<div class="playerDiv">				
 				<div class="audioTagClass">					
-					<audio controls="controls" id="player">
+					<audio id="player">
 						<source id="audio-src" src="">
 							Your browser does not support audio tag.
-					</audio>						
-				</div>											
+					</audio>
+					<div class="controlIconDiv js-pause"><i class="fa fa-pause"></i></div>
+					<div class="controlBtnDiv"><img class="playBtnClass" src="/images/playBtn.jpg" alt="play button" role="button"	/></div>
+					<div class="controlIconDiv js-stop"><i class="fa fa-stop"></i></div>		
+				</div>
+				<progress max="100" value="0">
+	    			<div class="progress-bar">
+	        			<span style="width: 100%;">Progress: 80%</span>
+	    			</div>
+				</progress>											
 			</div>			
 		</main>			
 	</div>	

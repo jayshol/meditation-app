@@ -56,6 +56,15 @@ main{
 	text-align: center;
 }
 
+.container-challenge{
+	width:90%;
+	height:auto;
+	background-color: rgba(154,5, 1,0.75);
+	margin: 60px auto 0 auto;
+	padding:15px;
+	color:white;
+}
+
 .buttonDivCls{
 	height: 200px;
 	text-align: center;
@@ -223,10 +232,9 @@ h3{
 
 .outerDiv{
 	height:auto;
-	width:60%;
+	width:82%;
 	border: 1px solid white;
-	margin: 0 auto;
-	
+	margin: 0 auto;	
 }
 
 .nameDiv{
@@ -236,35 +244,37 @@ h3{
 	background-color: white;
 	color:red;
 	text-align: center;
-	line-height: 35px;
+	line-height: 30px;
 	display:inline-block;
 	margin:0;
 	padding: 0;
+	font-weight:bold;
+	vertical-align: top;
 }
 .nameDivHeader{
 	height: 30px;
 	width: 20%;	
 	display:inline-block;
-	/*border: 1px solid blue; */
-	background-color: white;
+	/*border: 1px solid blue; 
+	background-color: white;*/
 	
 
 }
 
 .dayBarClass{
-	height:25px;
-	width: 15px;
+	height:30px;
+	width: 3.5%;
 	border:1px solid white; 
-	/*background-color: #FFD368; */
+	/*background-color: rgb(255, 211, 104);*/
 	display:inline-block;
-	margin: 3px;
+	margin: 0 3px;
 }
 
 .dayHeader{
-	height:25px;
-	width: 15px;
+	height:30px;
+	width: 3.5%;
 	display:inline-block;
-	margin: 3px;
+	margin: 0 3px;
 	border:1px solid black;
 	text-align: center;
 	color: #FFD368;
@@ -273,11 +283,13 @@ h3{
 .hbar{
 	display:inline-block;
 	height:30px;
-	width:77.5%;
+	width:80%;
 	
 /*	border: 1px solid green; */
 	margin:0;
 	padding: 0;
+	line-height: 30px;
+	vertical-align: top;
 }
 
 .barDiv{
@@ -286,6 +298,8 @@ h3{
 	/*border: 1px solid blue;*/
 	margin:0;
 	padding:0;
+	line-height: 37px;
+	vertical-align: top;
 
 }
 
@@ -373,14 +387,7 @@ h3{
 	display:inline-block;	
 }
 
-.audioTagClass{
-	height: 200px;
-	width: 300px;
-	/*border: 1px solid white;	*/
-	display: inline-block;
-	margin: 0 auto;	
-	line-height: 200px;
-}
+
 
 .centerClass{
 	text-align: center;
@@ -576,7 +583,7 @@ label{
 	border-top-left-radius: 15px;
 	border-top-right-radius: 15px;
 	position:fixed;
-	bottom: 150px;
+	bottom: 200px;
 	right:0;
 	left:0;
 }
@@ -586,27 +593,34 @@ label{
 	font-size: 16px;
 }
 
+.audioTagClass{
+	height: 120px;
+	width: 300px;
+	/*border: 1px solid white;	*/
+	display: inline-block;
+	margin: 0 auto 25px;	
+	line-height: 200px;
+
+}
+
 /*  */
 .playerDiv{
-	height: 150px;
+	height: 200px;
 	width: 500px;
 	border: 1px solid white;
 	margin:0 auto;
 	right: 0;
     left: 0;
     bottom: 0px;
-    position:fixed;
-    display:flex;
-    border-top-right-radius:300px;
-    border-top-left-radius:300px;
+    position:fixed;    
+    border-top-right-radius:150px;
+    border-top-left-radius:150px;
     text-align:center;
+    font-size: 0;
+    background-color: rgba(255,255,255,0.25);
+    padding-top: 15px;
 }
 
-
-.progress-ring{
-	/*margin:0 auto;	
-	margin-top: 15px;*/
-}
 
 .opt-div{	
 	display: inline-block;
@@ -617,4 +631,42 @@ label{
 	margin: 0 auto;
 	width: 75%;
 	height: auto;
+}
+
+.playBtnClass{
+	height: 100px;
+	width: 100px;
+	border-radius: 50%;
+	display: inline-block;
+}
+
+.controlBtnDiv{
+	height: 110px;
+	width:110px;
+	border: 1px solid white;
+	display:inline-block;	
+}
+.controlIconDiv{
+	height: 110px;
+	width:50px;
+	border: 1px solid white;
+	display:inline-block;
+	padding-bottom: 15px;
+	line-height: 110px;
+	vertical-align: top;
+}
+.controlIconDiv>i{
+	font-size: 18px;
+	vertical-align: middle;	
+}
+
+
+
+progress {
+  width: 250px;
+  height: 10px;
+  margin: 0 auto;
+  display:block;
+  border: 1px solid black;
+  border-radius: 15px;
 }
