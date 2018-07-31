@@ -8,14 +8,6 @@ const SignUp_Url = serverBase + "api/users/signup";
 const Login_Url = serverBase + "api/auth/login";
 let user = null;
 
-/*  progress circle   
-const circle = document.querySelector('circle');
-const radius = circle.r.baseVal.value;
-const circumference = radius * 2 * Math.PI;
-
-circle.style.strokeDasharray = `${circumference} ${circumference}`;
-circle.style.strokeDashoffset = `${circumference}`;
-*/
 
 function handleNavigationClicks(){
 	$('.js-displaySignup').click(displaySignUp);
@@ -230,10 +222,10 @@ function handleChallengeSignUp(){
 
 function getChallengeObject(user){
 	user = user;
-	console.dir(user);
+	//console.dir(user);
 	const challengeName = monthNames[new Date().getMonth() + 1] + "-" + new Date().getFullYear();
 	const url = Challenge_Url + "/" + challengeName;
-	console.log(url);
+	//console.log(url);
 	//$.getJSON(url, updateChallenges);
 
 	$.ajax({
@@ -303,9 +295,7 @@ function updateChallenges(challenge, user){
 				console.error(err);
 			}
 		}); 
-	}
-
-	
+	}	
 }
 
 function meditationPage(){
@@ -392,48 +382,69 @@ function saveUserObject(){
 	});
 }
 
-function updateUserData(){	
+function updateUserData(){
+	let active = false;	
 	if(user !== null){
 		if(user.lastMeditated !== formatDate(new Date())){
 			if(user.lastMeditated === undefined){
 				user.lastMeditated = formatDate(new Date());
 				user.streak = 1;
 				user.numberOfDaysMeditated = 1;
-				if(user.registeredForCurrentChallenge && Date().getDate() === 1){
-					user.active = true;
+				if(user.registeredForNextChallenge && Date().getDate() === 1){
+					active = true;
 				}
+				updateChallengeInfo(active);
 			} else{
 				user.numberOfDaysMeditated += 1;
 				if(checkStreak(user.lastMeditated)){
 					user.streak += 1;
 					if(user.registeredForCurrentChallenge && user.active){
-						user.active = true;
+						active = true;
 					}else{
-						user.active = false;
+						active = false;
 					}
 					checkAndUpdateBadges(user);
 				}else{
 					user.streak = 1;
 					if(user.registeredForCurrentChallenge){
 						if(Date().getDate === 1){
-							user.active = true;
+							active = true;
 						}else{
-							user.active = false;
+							active = false;
 						}					
 					}
 				}
+				user.lastMeditated = formatDate(new Date());
+				updateChallengeInfo(active);
 			}	
-		}						
+		}
+
+		if(Date.getDate() === 1){
+			if(user.registeredForNextChallenge === true){
+				user.registeredForCurrentChallenge = true;
+				user.registeredForNextChallenge = false;
+			}
+		}
 	}else{
 		alert("Please login before you meditate");
 		togglePageManager('login-window');
 	}	
 }
 
+function updateChallengeInfo(active){
+	const challengeName = getCurrentChallengeName();
+	for(let i=0;i<user.registeredChallenges.length;i++){
+		if(user.registeredChallenges[i].challengeName === challengeName){
+			user.registeredChallenges[i].lastMeditated = formatDate(new Date());
+			user.active = active;
+		}
+	}
+}
+
 function checkAndUpdateBadges(user){
-	if(user.streak === 21 && user.active !== true){
-		return;
-	}else{
+//	if(user.streak === 21 && user.active !== true){
+//		return;
+//	}else{
 		const name = user.streak + '-day';
 		let url = Badge_Url + "/" + name;
 		$.getJSON(url, function(badge){
@@ -441,7 +452,7 @@ function checkAndUpdateBadges(user){
 				user.badges.push(badge);
 			}			
 		});
-	}			
+//	}			
 }
 
 function checkStreak(lastMeditated){

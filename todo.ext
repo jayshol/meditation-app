@@ -24,3 +24,10 @@ Clean the code.
 check for semantic html
 Account close button on dashboard
 increment streak through a query without passing a number.
+
+
+Testing
+=======
+1. User registers but does not meditate.
+2. User registers but stops in the middle.
+3. User continues actively and completes.
