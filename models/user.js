@@ -11,11 +11,12 @@ const userSchema = mongoose.Schema({
 	password: {type: String, required: true},
 	registeredForCurrentChallenge : {type:Boolean},
 	lastMeditated: {type:Date},
-	streak: {type: Number},	 
+	streak: {type: Number},
+	active:{type:Boolean},	 
 	isRegisteredForNextChallenge:{type:Boolean},
 	numberOfDaysMeditated: {type:Number},
 	badges:[{type:Schema.Types.ObjectId, ref:"Badge"}],
-	registeredChallenges:[{challengeName: {type:String}, status:{type:String},active:{type:Boolean}, lastMeditated:{type:Date}}]
+	registeredChallenges:[{challengeName: {type:String}, status:{type:String}, lastMeditated:{type:Date}}]
 });
 
 userSchema.methods.serialize = function(){

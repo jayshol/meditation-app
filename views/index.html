@@ -20,7 +20,7 @@
 		  </div>
 		  <a href="#" id="challengeBtn">21-Day Challenge</a>
 		  <a href="#" class="js-displayLogin">LogIn</a>
-		  <a href="#" class="js-displaySignup">SignIn</a>		  
+		  <a href="#" class="js-displaySignup">SignUp</a>		  
 		  <a href="#" id="homeBtn">Home</a> 
 		</div>
 		<div class="navbarHolder"><i class="fa fa-ellipsis-h"></i></div>
@@ -47,7 +47,11 @@
 					</div>
 					<div>
 						<label for="password">Password: </label>
-						<input type="password" name="password" required />
+						<input type="password" name="password" id="password" required />
+					</div>
+					<div>
+						<label for="confirmPassword">Confirm Password: </label>
+						<input type="password" id="confirmPassword" name="confirmPassword" required />
 					</div>
 					<div>
 						<button type="submit">Sign Up</button>
@@ -130,7 +134,23 @@
 	        			<span style="width: 100%;">Progress: 80%</span>
 	    			</div>
 				</progress>											
-			</div>			
+			</div>
+			<div class="alertClass">
+				<div class="caption"><i>Focus</i><i class="fa fa-window-close js-close" aria-hidden="true"></i></div>
+				<div>
+					<p class="messageClass">Hello</p>
+				</div>
+				
+				<button id="okBtn">Ok</button>
+			</div>
+			<div class="confirmClass">
+				<div class="captionClass"><i>Focus</i><i class="fa fa-window-close js-confirm-close" aria-hidden="true"></i></div>
+				<div class="messageDiv"><p class="messageCls">Hello</p></div>
+				<div class="BtnDiv"></div>				
+					<button id="ok">Ok</button>
+					<button id="cancel">Cancel</button>
+				</div>
+			</div>
 		</main>			
 	</div>	
 	<script

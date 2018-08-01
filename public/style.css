@@ -401,13 +401,18 @@ h3{
 /* sign up form */
 
 .signup-window, .login-window {
-	width: 50%;
+	width: 40%;
 	height: 50%;
 	margin:150px auto 0 auto;
 	color: white;
 	font-size: 20px;
 	background-color: rgba(154, 5, 1,0.25);
 	border-radius: 10px;	
+}
+
+.login-window{
+	width:35%;
+	height:35%;
 }
 
 .signup-window div, .login-window div{
@@ -444,9 +449,14 @@ h2.textClass{
 
 .signUpForm, .loginForm {
 	width: 350px;
-	height: 350px;
+	height: 400px;
 	margin: 0 auto;
 	padding: 35px 15px 35px 15px;	
+}
+
+.loginForm{
+	width:300px;
+	height:350px;
 }
 
 fieldset{
@@ -459,7 +469,7 @@ fieldset{
 legend{
   font-size: 25px;
   font-weight: bolder;
-  margin: 0 auto 15px;
+  margin: 0 auto;
   width:100%;
   text-align:center;
   color: black;
@@ -649,7 +659,7 @@ label{
 .controlIconDiv{
 	height: 110px;
 	width:50px;
-	border: 1px solid white;
+/*	border: 1px solid white; */
 	display:inline-block;
 	padding-bottom: 15px;
 	line-height: 110px;
@@ -670,3 +680,81 @@ progress {
   border: 1px solid black;
   border-radius: 15px;
 }
+
+.alertClass, .confirmClass{
+	position:absolute;
+	height: 20%;
+	width: 25%;
+	border:1px solid black;
+	background-color: rgba(255, 166, 17,1);
+	left: 35%;
+	top:20%;
+	margin-top: -50px;
+	margin-bottom: -80px;
+/*	line-height: 80px; */
+	text-align: center;
+	display: none;
+	border-radius: 10px;
+}
+
+.confirmClass{
+	line-height: 0;
+}
+
+.messageDiv{
+	height:60%;
+	width:100%;
+	border:1px solid transparent;
+	line-height: 16px;
+}
+
+.messageCls{
+	font-size: 16px;
+	font-weight: bold;
+}
+
+.messageClass{
+	font-size: 16px;
+	font-weight:bold;
+}
+
+.caption, .captionClass{
+	width:100%;
+	height: 30px;
+	background-color: rgba(154, 5, 1,0.25);
+	color:black;
+	line-height: 30px;
+	font-size: 18px;
+	font-weight: bold;
+	text-align: left;
+}
+
+.fa-window-close{
+	float:right;
+	font-size: 24px;
+	margin:3px;
+	cursor:pointer;	
+}
+
+#ok{
+	margin-right: 15px;
+}
+
+#ok, #cancel, #okBtn{
+	width: 70px;
+	border-radius: 5px;
+	font-weight: bold;
+	background-color: rgba(154, 5, 1,0.25);
+}
+
+.captionClass > i:first-child, .caption > i:first-child{
+	margin-left: 5px;
+}
+
+.alertClass > div:nth-child(2){
+	border: 1px solid transparent;
+	height: 60%;
+	width:100%;
+	line-height: 60px;	
+}
+

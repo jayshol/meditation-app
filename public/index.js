@@ -24,15 +24,19 @@ function handleNavigationClicks(){
 	$('#loginBtn').click(displayLogin);
 	$('#homeBtn').click(function(){
 		togglePageManager('.container-home');
-	});	
+	});
+	closeAlert();	
 	togglePageManager('.container-home');
 	$(window).click(function(e) {
 	  if (!e.target.matches('.dropbtn')) {
-	    var myDropdown = document.getElementById("myDropdown");
+	/*    var myDropdown = document.getElementById("myDropdown");
 	      if (myDropdown.classList.contains('show')) {
 	        myDropdown.classList.remove('show');
-	      }
+	      } */
+	      $('#myDropdown').removeClass("show");
 	  }
+
+	   //$('.alertClass').hide();
 	});
 
 	$('.dropbtn').click(myFunction);
@@ -46,7 +50,12 @@ function handleNavigationClicks(){
 	$('.playBtnClass').click(playAudio);
 	$('.js-pause').click(pauseAudio);
 	$('.js-stop').click(stopAudio);
-
+	$('.js-close').click(closeAlert);
+	$('.js-confirm-close').click(closeConfirm);
+	$('#ok').click(handleOk);
+	$('#cancel').click(handleCancel);
+	$('#okBtn').click(closeAlert);
+	
 	manageNavBeforeLogin();
 }
 
@@ -56,7 +65,7 @@ function manageNavBeforeLogin(){
 	$('.js-displaySignup').show();
 	$('.js-displayLogin').show();
 	$('#signUp').show();
-	$('#loginBtn').show();
+	$('#loginBtn').show();	
 }
 
 function manageNavAfterLogin(){
@@ -65,7 +74,7 @@ function manageNavAfterLogin(){
 	$('.js-displaySignup').hide();
 	$('.js-displayLogin').hide();
 	$('#signUp').hide();
-	$('#loginBtn').hide();
+	$('#loginBtn').hide();	
 }
 
 function playAudio(){
@@ -86,6 +95,32 @@ function stopAudio(){
 
 function myFunction() {
     $("#myDropdown").toggleClass("show");
+}
+
+function closeAlert(){
+	$('.alertClass').hide();
+}
+function closeConfirm(){
+	$('.confirmClass').hide();
+}
+
+function showAlert(message){
+	$('.messageClass').text(message);
+	$('.alertClass').show();
+}
+
+function showConfirm(message){
+	$('.messageCls').text(message);
+	$('.confirmClass').show();
+}
+
+function handleOk(){	
+	signUpUser();
+	$('.confirmClass').hide();
+}
+
+function handleCancel(){
+	$('.confirmClass').hide();
 }
 
 function togglePlayer(){	
@@ -115,6 +150,7 @@ function displayLogin(){
 
 function loginUser(event){
 	event.preventDefault();
+	
 	const formData = getFormData($('.loginForm').serializeArray());
 	$.ajax({
 		url: Login_Url,
@@ -124,35 +160,41 @@ function loginUser(event){
 		success: generateUserToken,
 		error: function(err){
 			console.dir(err);
+			showAlert("Incorrect password or username.");
 		},
 		contentType: 'application/json'
 	});
+		
 }
 
 function handleSignUp(event){
 	event.preventDefault();
-	const formData = getFormData($('.signUpForm').serializeArray());
-	$.ajax({
-		url: SignUp_Url,
-		method: "POST",
-		dataType:'json',
-		data : JSON.stringify(formData),
-		success : userSignedUp,
-		error: function(err){
-			const error = JSON.parse(err.responseText);
-			alert(error.location + " " + error.message);
-		},
-		contentType:'application/json'
-	})
-	
-	//alert("in sign up");
+	if($('#password').val() !== $('#confirmPassword').val()){
+		showAlert("password and confirmPassword fields should match.");
+	}else{
+		const formData = getFormData($('.signUpForm').serializeArray());
+		$.ajax({
+			url: SignUp_Url,
+			method: "POST",
+			dataType:'json',
+			data : JSON.stringify(formData),
+			success : userSignedUp,
+			error: function(err){
+				const error = JSON.parse(err.responseText);
+				alert(error.location + " " + error.message);
+			},
+			contentType:'application/json'
+		}); 
+	}	
 }
 
 function getFormData(data){
 	const indexed_array = {};
 
    $.map(data, function(n, i) {
-    indexed_array[n['name']] = n['value'];
+	   	if(n['name'] !== "confirmPassword"){
+	   		indexed_array[n['name']] = n['value'];
+	   	}    
    });
   // console.dir(indexed_array);
    return indexed_array;
@@ -171,53 +213,60 @@ function generateUserToken(data) {
 function logoutUser(){
 	//alert("hello");
 	sessionStorage.removeItem('tokenKey');
-	sessionStorage.removeItem('userId');
+	sessionStorage.removeItem('userId');	
 	togglePageManager('.container-home');
 	manageNavBeforeLogin();
+	showAlert("You are successfully logged out.");	
 }
 
 function userSignedUp(data){
-	alert("user signed Up");
+	showAlert("You are signed Up. Please log in.");
+	displayLogin();
 }
 
 function handleChallengeSignUp(){
 	const month = monthNames[new Date().getMonth() + 1];
 	const text = "You will be signed up for " + month + " month's 21-day challenge.";
-	if(confirm(text)){
-		getUserObject(function(user){
-			if(user !== null){
-				user.isRegisteredForNextChallenge = true;
-				const challengeName = monthNames[new Date().getMonth() + 1] + "-" + new Date().getFullYear();
-				const regObject = {
-					challengeName: challengeName,
-					status: "Not started"
-				}
-		/*		if(! checkIfAlreadySignedUp(challengeName, user)){
+	showConfirm(text);
+	//if(confirm(text)){
+		
+	//} 
+}
 
-				}else{
-					alert("You have already signed up.")
-				}*/
-				user.registeredChallenges.push(regObject);
-				//$.put(Users_Url, user, getChallengeObject);
-				//getChallengeObject();
-				console.dir(user);
-				user = user;
-				$.ajax({
-					url: Users_Url +"/" + JSON.parse(sessionStorage.getItem("userId")) ,
-					method: 'PUT',
-					data: JSON.stringify(user),
-					success: function(data){						
-						getChallengeObject(user);
-					},
-					dataType: 'json',
-					contentType: 'application/json',
-					beforeSend:function(xhr){
-						xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("tokenKey"));
-					}
-				});
+function signUpUser(){
+	getUserObject(function(user){
+		if(user !== null){
+			user.isRegisteredForNextChallenge = true;
+			const challengeName = monthNames[new Date().getMonth() + 1] + "-" + new Date().getFullYear();
+			const regObject = {
+				challengeName: challengeName,
+				status: "Not started"
 			}
-		});		
-	}
+	/*		if(! checkIfAlreadySignedUp(challengeName, user)){
+
+			}else{
+				alert("You have already signed up.")
+			}*/
+			user.registeredChallenges.push(regObject);
+			//$.put(Users_Url, user, getChallengeObject);
+			//getChallengeObject();
+			console.dir(user);
+			user = user;
+			$.ajax({
+				url: Users_Url +"/" + JSON.parse(sessionStorage.getItem("userId")) ,
+				method: 'PUT',
+				data: JSON.stringify(user),
+				success: function(data){						
+					getChallengeObject(user);
+				},
+				dataType: 'json',
+				contentType: 'application/json',
+				beforeSend:function(xhr){
+					xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("tokenKey"));
+				}
+			}); 
+		}
+	});		
 }
 
 function getChallengeObject(user){
@@ -333,7 +382,7 @@ function displayMeditationWindow(event){
 //	$('#playerHolder').show();
 //	$('.playerDiv').show();
 	$('.meditation-window').addClass("backgroundClass");
-	console.log(event.target);
+	//console.log(event.target);
 	const dataObj = $(event.target).data("audio");
 	//$('.meditation-window').find('h2').text(dataObj.name);
 	const audio = $('#player');
@@ -354,13 +403,19 @@ function updateProgress(){
 function meditationComplete(){
 	$(this).currentTime = 0;
 	console.log("ended");
-	updateUserData();
-	//getUserObject(updateUserData);
-	console.dir(user);
-	saveUserObject();	
+	console.log(user);
+	if(user === null){
+		getUserObject(updateUserData);
+	}else{
+		updateUserData();
+		//getUserObject(updateUserData);
+		console.dir(user);
+		//saveUserObject();
+	}
+		
 }
 
-function saveUserObject(){
+function saveUserObject(user){
 	$.ajax({
 		url: Users_Url + "/" + user._id,
 		method: "PUT",
@@ -382,69 +437,77 @@ function saveUserObject(){
 	});
 }
 
-function updateUserData(){
-	let active = false;	
-	if(user !== null){
-		if(user.lastMeditated !== formatDate(new Date())){
+function updateUserData(user){	
+	if(user !== null){		
+		const todaysDate = new Date();
+		if(user.lastMeditated !== formatDate(todaysDate)){
 			if(user.lastMeditated === undefined){
-				user.lastMeditated = formatDate(new Date());
+				user.lastMeditated = formatDate(todaysDate);
 				user.streak = 1;
 				user.numberOfDaysMeditated = 1;
-				if(user.registeredForNextChallenge && Date().getDate() === 1){
-					active = true;
+				if(user.registeredForNextChallenge && todaysDate.getDate() === 1){
+					user.active = true;
+					updateChallengeInfo("lastMeditated", formatDate(todaysDate), user);
 				}
-				updateChallengeInfo(active);
+				
 			} else{
 				user.numberOfDaysMeditated += 1;
 				if(checkStreak(user.lastMeditated)){
 					user.streak += 1;
 					if(user.registeredForCurrentChallenge && user.active){
-						active = true;
+						user.active = true;
 					}else{
-						active = false;
+						user.active = false;
 					}
 					checkAndUpdateBadges(user);
 				}else{
 					user.streak = 1;
 					if(user.registeredForCurrentChallenge){
-						if(Date().getDate === 1){
-							active = true;
+						if(todaysDate.getDate === 1){
+							user.active = true;
 						}else{
-							active = false;
+							user.active = false;
 						}					
 					}
 				}
-				user.lastMeditated = formatDate(new Date());
-				updateChallengeInfo(active);
+				user.lastMeditated = formatDate(todaysDate);
+				if(todaysDate.getDate() >= 1 && todaysDate.getDate() <= 21){
+					updateChallengeInfo("lastMeditated", formatDate(todaysDate), user);
+				}				
 			}	
 		}
 
-		if(Date.getDate() === 1){
+		if(todaysDate.getDate() === 1){
 			if(user.registeredForNextChallenge === true){
 				user.registeredForCurrentChallenge = true;
 				user.registeredForNextChallenge = false;
 			}
 		}
+		if(todaysDate.getDate() === 21){
+			if(user.registeredForCurrentChallenge && user.active === true){
+				updateChallengeInfo("status","Completed", user);
+			}
+		}
+		saveUserObject(user);
 	}else{
 		alert("Please login before you meditate");
 		togglePageManager('login-window');
 	}	
 }
 
-function updateChallengeInfo(active){
+function updateChallengeInfo(field, value, user){
 	const challengeName = getCurrentChallengeName();
 	for(let i=0;i<user.registeredChallenges.length;i++){
 		if(user.registeredChallenges[i].challengeName === challengeName){
-			user.registeredChallenges[i].lastMeditated = formatDate(new Date());
-			user.active = active;
+			user.registeredChallenges[i][field] = value;			
 		}
 	}
 }
 
 function checkAndUpdateBadges(user){
-//	if(user.streak === 21 && user.active !== true){
-//		return;
-//	}else{
+	if(user.streak === 21 && user.active !== true){
+		return;
+	}else{
 		const name = user.streak + '-day';
 		let url = Badge_Url + "/" + name;
 		$.getJSON(url, function(badge){
@@ -452,7 +515,7 @@ function checkAndUpdateBadges(user){
 				user.badges.push(badge);
 			}			
 		});
-//	}			
+	}			
 }
 
 function checkStreak(lastMeditated){
@@ -636,7 +699,8 @@ function getLastMeditatedMonth(user){
 }
 
 function getCurrentChallengeName(){
-	return monthNames[new Date().getMonth()] + "-" + new Date().getFullYear();
+	//return monthNames[new Date().getMonth()] + "-" + new Date().getFullYear();
+	return "Jul-2018";
 }
 
 function displayUsers(challenge){
@@ -728,8 +792,8 @@ function populateDashboard(user){
 		$('.badgesDiv').html('<p>No badges earned so far.</p>');
 	}
 
-	$('.streakCls').first().find('span').text(user.streak);
-	$('.streakCls').next().find('span').text(user.numberOfDaysMeditated);
+	$('.streakCls').first().find('span').text(user.streak || 0);
+	$('.streakCls').next().find('span').text(user.numberOfDaysMeditated || 0);
 	
 	if(user.isRegisteredForCurrent === 'yes'){
 		$('.challengeCls').first().show();
