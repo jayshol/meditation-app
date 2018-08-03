@@ -1,6 +1,6 @@
 
-const serverBase = '//localhost:8080/';
-//const serverBase = 'https://shrouded-peak-49521.herokuapp.com/';
+//const serverBase = '//localhost:8080/';
+const serverBase = 'https://shrouded-peak-49521.herokuapp.com/';
 const Users_Url = serverBase + 'users';
 const Audio_Url = serverBase + 'audios';
 const Badge_Url = serverBase + 'badges';
