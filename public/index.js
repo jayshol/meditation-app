@@ -1,6 +1,6 @@
 
-//const serverBase = '//localhost:8080/';
-const serverBase = 'https://shrouded-peak-49521.herokuapp.com/';
+const serverBase = '//localhost:8080/';
+//const serverBase = 'https://shrouded-peak-49521.herokuapp.com/';
 const Users_Url = serverBase + 'users';
 const Audio_Url = serverBase + 'audios';
 const Badge_Url = serverBase + 'badges';
@@ -228,10 +228,7 @@ function userSignedUp(data){
 function handleChallengeSignUp(){
 	const month = monthNames[new Date().getMonth() + 1];
 	const text = "You will be signed up for " + month + " month's 21-day challenge.";
-	showConfirm(text);
-	//if(confirm(text)){
-		
-	//} 
+	showConfirm(text);	
 }
 
 function signUpUser(){
@@ -378,11 +375,11 @@ function populateAudioFiles(audios){
 }
 
 function displayMeditationWindow(event){
-	togglePageManager('.meditation-window');
+	togglePageManager('.meditation-window');	
 //	$('.navbarHolder').show();
 //	$('#playerHolder').show();
 //	$('.playerDiv').show();
-	$('.meditation-window').addClass("backgroundClass");
+	//$('.meditation-window').addClass("backgroundClass");
 	//console.log(event.target);
 	const dataObj = $(event.target).data("audio");
 	//$('.meditation-window').find('h2').text(dataObj.name);
@@ -442,15 +439,8 @@ function updateUserData(user){
 	if(user !== null){		
 		const todaysDate = new Date();
 		if(user.lastMeditated !== formatDate(todaysDate)){
-			if(user.lastMeditated === undefined){
-				user.lastMeditated = formatDate(todaysDate);
-				user.streak = 1;
-				user.numberOfDaysMeditated = 1;
-				if(user.registeredForNextChallenge && todaysDate.getDate() === 1){
-					user.active = true;
-					updateChallengeInfo("lastMeditated", formatDate(todaysDate), user);
-				}
-				
+			if(user.lastMeditated === undefined){			
+				user = firstTimeUser(user);				
 			} else{
 				user.numberOfDaysMeditated += 1;
 				if(checkStreak(user.lastMeditated)){
@@ -494,6 +484,17 @@ function updateUserData(user){
 		alert("Please login before you meditate");
 		togglePageManager('login-window');
 	}	
+}
+
+function firstTimeUser(user){
+	user.lastMeditated = formatDate(todaysDate);
+	user.streak = 1;
+	user.numberOfDaysMeditated = 1;
+	if(user.registeredForNextChallenge && todaysDate.getDate() === 1){
+		user.active = true;
+		updateChallengeInfo("lastMeditated", formatDate(todaysDate), user);
+	}
+	return user; 
 }
 
 function updateChallengeInfo(field, value, user){
@@ -618,7 +619,8 @@ function displayChallengeData(challenge){
 			const year = getLastMeditatedYear(user);
 			//console.log(month + ' ' + new Date().getMonth());
 			//console.log(year + ' ' + new Date().getFullYear());
-			if(new Date().getMonth() === month && new Date().getFullYear() === year){
+		//	if(new Date().getMonth() === month && new Date().getFullYear() === year){
+			if(new Date().getFullYear() === year){
 				for(let j=0;j<days_meditated;j++){
 					//console.log(j);
 					if(user.active){
@@ -662,7 +664,7 @@ function sortChallengeData(challenge){
 
 function getLastMeditatedDate(user){
 	const challengeName = getCurrentChallengeName();
-	for(const i=0;i<user.registeredChallenges.length;i++){
+	for(let i=0;i<user.registeredChallenges.length;i++){
 		if(user.registeredChallenges[i].challengeName === challengeName){
 			if(user.registeredChallenges[i].lastMeditated === undefined){
 				return undefined;
@@ -675,7 +677,7 @@ function getLastMeditatedDate(user){
 
 function getLastMeditatedYear(user){
 	const challengeName = getCurrentChallengeName();
-	for(const i=0;i<user.registeredChallenges.length;i++){
+	for(let i=0;i<user.registeredChallenges.length;i++){
 		if(user.registeredChallenges[i].challengeName === challengeName){
 			if(user.registeredChallenges[i].lastMeditated === undefined){
 				return undefined;
@@ -688,7 +690,7 @@ function getLastMeditatedYear(user){
 
 function getLastMeditatedMonth(user){
 	const challengeName = getCurrentChallengeName();
-	for(const i=0;i<user.registeredChallenges.length;i++){
+	for(let i=0;i<user.registeredChallenges.length;i++){
 		if(user.registeredChallenges[i].challengeName === challengeName){
 			if(user.registeredChallenges[i].lastMeditated === undefined){
 				return undefined;
@@ -719,7 +721,7 @@ function displayUsers(challenge){
 	}
 
 	htmlString += "</div>";
-	$('.usersList').append(htmlString);
+	$('.usersList').html(htmlString);
 }
 
 function createHeader(){
@@ -758,10 +760,14 @@ function togglePageManager(pageName){
 		$('.navbarHolder').hide();
 		$('#playerHolder').hide();
 		$('.playerDiv').hide();
+		$(document.body).addClass("regularBackground");
+		$(document.body).removeClass("backgroundClass");
 	}else{
 		$('.navbarHolder').show();
 		$('#playerHolder').show();
 		$('.playerDiv').show();
+		$(document.body).addClass("backgroundClass");
+		$(document.body).removeClass("regularBackground");
 	}
 
 	const pageNames = ['.container-home', 

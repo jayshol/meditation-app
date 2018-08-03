@@ -8,7 +8,18 @@ html, body{
 	padding:0;
 }
 body{
-	background: url('/images/meditation.jpg') no-repeat fixed center;
+/*	background: url('/images/meditation.jpg') no-repeat fixed center;
+	background-size: cover;
+	height:100vh;		
+	width: 100%; */
+}
+
+
+.regularBackground{
+	background: url("/images/meditation.jpg") no-repeat fixed center;
+	background-size: cover;
+	height:100vh;		
+	width: 100%;
 }
 
 header{
@@ -58,9 +69,9 @@ main{
 
 .container-challenge{
 	width:90%;
-	height:auto;
+	height:85vh;
 	background-color: rgba(154,5, 1,0.75);
-	margin: 60px auto 0 auto;
+	margin: 25px auto 0 auto;
 	padding:15px;
 	color:white;
 }
@@ -233,15 +244,15 @@ h3{
 .outerDiv{
 	height:auto;
 	width:82%;
-	border: 1px solid white;
+	/*border: 1px solid white;*/
 	margin: 0 auto;	
 }
 
 .nameDiv{
 	height: 30px;
 	width: 20%;
-	/*border: 1px solid blue;*/
-	background-color: white;
+	/*border: 1px solid blue;
+	background-color: white;*/
 	color:red;
 	text-align: center;
 	line-height: 30px;
@@ -250,6 +261,7 @@ h3{
 	padding: 0;
 	font-weight:bold;
 	vertical-align: top;
+	color:rgb(255, 211, 104);
 }
 .nameDivHeader{
 	height: 30px;
@@ -653,7 +665,7 @@ label{
 .controlBtnDiv{
 	height: 110px;
 	width:110px;
-	border: 1px solid white;
+	/*border: 1px solid white;*/
 	display:inline-block;	
 }
 .controlIconDiv{
