@@ -33,18 +33,12 @@ function handleNavigationClicks(){
 	closeAlert();	
 	togglePageManager('.container-home');
 	$(window).click(function(e) {
-	  if (!e.target.matches('.dropbtn')) {
-	/*    var myDropdown = document.getElementById("myDropdown");
-	      if (myDropdown.classList.contains('show')) {
-	        myDropdown.classList.remove('show');
-	      } */
-	      $('#myDropdown').removeClass("show");
-	  }
-
-	   //$('.alertClass').hide();
+	  if (!e.target.matches('.dropbtn')) {	
+	      $('#drop-down').removeClass("show");
+	  }	   
 	});
 
-	$('.dropbtn').click(myFunction);
+	$('.dropbtn').click(handleDropdown);
 
 	$(".navbarHolder").click(toggleNavbar);
 	//$(".navbarHolder").hide();
@@ -105,8 +99,8 @@ function stopPlayer(){
 	meditationPage();
 }
 
-function myFunction() {
-    $("#myDropdown").toggleClass("show");
+function handleDropdown() {
+    $("#drop-down").toggleClass("show");
 }
 
 function closeAlert(){

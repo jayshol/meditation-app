@@ -1,83 +1,91 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+	<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
 	<title>Meditation App</title>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
 	<link rel="stylesheet" href="/style.css">
 </head>
 <body class="regularBackground">
-	<div class="container">				
-		<div class="navbar" id="navbarDiv">		  		
-		  <div class="dropdown">
+	<header class="container" role="banner">				
+		<nav class="navbar" id="navbarDiv" role="navigation">		  		
+		  <article class="dropdown">
 		    <button class="dropbtn">User
 		      <i class="fa fa-caret-down"></i>
 		    </button>
-		    <div class="dropdown-content" id="myDropdown">
+		    <section class="dropdown-content" id="drop-down">
 		      <a href="#" id="dashboardBtn">Dashboard</a>
 		      <a href="#" id="meditate-btn">Meditation</a>		      
 		      <a href="#" class="js-logoutBtn">LogOut</a>
-		    </div>
-		  </div>
+		    </section>
+		  </article>
 		  <a href="#" id="challengeBtn">21-Day Challenge</a>
 		  <a href="#" class="js-displayLogin">LogIn</a>
 		  <a href="#" class="js-displaySignup">SignUp</a>		  
 		  <a href="#" id="homeBtn">Home</a> 
-		</div>
-		<div class="navbarHolder"><i class="fa fa-ellipsis-h"></i></div>
-		<main>
-			<div class="container-home">
-				<header>
+		</nav>
+		<div class="navbarHolder"><i class="fa fa-ellipsis-h"></i></div>			
+	</header>
+	<main role="main">
+			<section class="container-home">
+				<header class="headerCls">
 					<h1>Focus</h1>
 				</header>
 				<p class="captionCls">Meditate. Let the light of the heart engulf you.</p>
 				<div class="buttonDivCls">
-					<button id="signUp" name="signUp" class="buttonCls">Sign Up</button>
-					<button id="loginBtn" name="loginBtn" class="buttonCls">Login</button>
+					<button id="signUp" name="signUp" class="buttonCls" role="button">Sign Up</button>
+					<button id="loginBtn" name="loginBtn" class="buttonCls" role="button">Login</button>
 				</div>
-			</div>
-			<div class="signup-window">				
+			</section>
+			<section class="signup-window">				
 				<form role="form" class="signUpForm">
 					<fieldset id="signUp-form">
 						<legend>
 							Sign Up
 						</legend>
 						<div>
-						<label for="userName">UserName: </label>
-						<input type="text" name="userName" required />
-					</div>
-					<div>
-						<label for="password">Password: </label>
-						<input type="password" name="password" id="password" required />
-					</div>
-					<div>
-						<label for="confirmPassword">Confirm Password: </label>
-						<input type="password" id="confirmPassword" name="confirmPassword" required />
-					</div>
-					<div>
-						<button type="submit">Sign Up</button>
-					</div>
+							<label for="userName">UserName: 
+								<input type="text" name="userName" required />
+							</label>
+						</div>
+						<div>
+							<label for="password">Password: 
+								<input type="password" name="password" id="password" required />
+							</label>
+						</div>
+						<div>
+							<label for="confirmPassword">Confirm Password: 
+								<input type="password" id="confirmPassword" name="confirmPassword" required />
+							</label>
+						</div>
+						<div>
+							<button type="submit" role="button">Sign Up</button>
+						</div>
 					</fieldset>
 				</form>				
-			</div>
-			<div class="login-window">
+			</section>
+			<section class="login-window">
 				<form role="form" class="loginForm">
 					<fieldset>
 						<legend>Login</legend>
 						<div>
-							<label for="username">UserName :</label>
-							<input type="text" name="username"  required value="monkey" />
+							<label for="username">UserName :
+								<input type="text" name="username"  required value="monkey" />
+							</label>
 						</div>
 						<div>
-							<label for="password">Password</label>
-							<input type="password" name="password"  required value="monkey123" />
+							<label for="password">Password
+								<input type="password" name="password"  required value="monkey123" />
+							</label>
 						</div>
 						<div>
-							<button type="submit">Login</button>
+							<button type="submit" role="button">Login</button>
 						</div>
 					</fieldset>
 				</form>
-			</div>
-			<div class="container-dashboard">
+			</section>
+			<section class="container-dashboard">
 				<h1>Dashboard</h1>
 				<div class="js-data">
 					<p class="streakCls">Currently running a :<span></span> day streak.</p>
@@ -99,61 +107,59 @@
 					</div>
 				</div>
 				<button id="delete-btn" type="button">Close Account</button>				
-			</div>
-			<div class="container-challenge">
+			</section>
+			<section class="container-challenge">
 				<h1>21 Day Challenge</h1>
 				<p>21 day Challenge starts on the first of every month and continues till 21st of each month. Users can sign up for this challenge and win the 21 day challenge badge.</p>
 				<h2 class='js-nextChallenge'>Sign Up for the next challenge</h2>
 				<p>Today is the <span></span> of the challenge</p>
 				<p><span></span> out of the total <span></span> registered users are actively meditating so far.</p>	
 				<div class="usersList"></div>								
-			</div>
-			<div class="container-meditate">
+			</section>
+			<section class="container-meditate">
 				<h2 class="textClass">Choose an audio for meditation</h2>
 				<div class="audio-container">										
 				</div>
-			</div>
-			<div class="meditation-window">
+			</section>
+			<section class="meditation-window">
 				<div class="centerClass">														
 				</div>
-			</div>
-			<div id="playerHolder">
+			</section>
+			<article id="playerHolder">
 				<i class="fa fa-ellipsis-h"></i>
-			</div>
-			<div class="playerDiv">				
-				<div class="audioTagClass">					
+			</article>
+			<article class="playerDiv">				
+				<section class="audioTagClass">					
 					<audio id="player">
 						<source id="audio-src" src="">
 							Your browser does not support audio tag.
 					</audio>
-					<div class="controlIconDiv js-pause"><i class="fa fa-pause"></i></div>
+					<div class="controlIconDiv js-pause"><i class="fa fa-pause" title="Pause button"></i></div>
 					<div class="controlBtnDiv"><img class="playBtnClass" src="/images/playBtn.jpg" alt="play button" role="button"	/></div>
-					<div class="controlIconDiv js-stop"><i class="fa fa-stop"></i></div>		
-				</div>
-				<progress max="100" value="0">
+					<div class="controlIconDiv js-stop"><i class="fa fa-stop" title="Stop button"></i></div>		
+				</section>
+				<progress max="100" value="0" role="progressbar">
 	    			<div class="progress-bar">
 	        			<span style="width: 100%;">Progress: 80%</span>
 	    			</div>
 				</progress>											
-			</div>
-			<div class="alertClass">
+			</article>
+			<article class="alertClass" role="alertDialog">
 				<div class="caption"><i>Focus</i><i class="fa fa-window-close js-close" aria-hidden="true"></i></div>
 				<div>
-					<p class="messageClass">Hello</p>
-				</div>
-				
-				<button id="okBtn">Ok</button>
-			</div>
-			<div class="confirmClass">
+					<p class="messageClass" role="alert">Hello</p>
+				</div>				
+				<button id="okBtn" role="button">Ok</button>
+			</article>
+			<article class="confirmClass" role="dialog">
 				<div class="captionClass"><i>Focus</i><i class="fa fa-window-close js-confirm-close" aria-hidden="true"></i></div>
-				<div class="messageDiv"><p class="messageCls">Hello</p></div>
+				<div class="messageDiv" role="alert"><p class="messageCls">Hello</p></div>
 				<div class="BtnDiv"></div>				
-					<button id="ok">Ok</button>
-					<button id="cancel">Cancel</button>
+					<button id="ok" role="button">Ok</button>
+					<button id="cancel" role="button">Cancel</button>
 				</div>
-			</div>
-		</main>			
-	</div>	
+			</article>
+	</main>		
 	<script
           src="https://code.jquery.com/jquery-3.2.1.min.js"
           integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
