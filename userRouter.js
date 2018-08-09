@@ -1,11 +1,17 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const passport = require('passport');
 
 const {User} = require('./models/user');
+const {router: authRouter, localStrategy, jwtStrategy} = require('./auth');
 
 const router = express.Router();
 
 const jsonParser = bodyParser.json();
+passport.use(localStrategy);
+passport.use(jwtStrategy);
+
+const jwtAuth = passport.authenticate('jwt', {session:false});
 
 router.post('/signup', jsonParser, (req, res) => {
 	const requiredFields = ['userName', 'password'];
@@ -108,5 +114,58 @@ router.post('/signup', jsonParser, (req, res) => {
 		});
 
 });
+
+router.delete('/remove/:id', jwtAuth, (req, res) => {
+		User
+		.findByIdAndRemove(req.params.id)
+		.then(user => res.status(204).end())
+		.catch(err => {
+			console.log(err);
+			res.status(500).json({'error':'Internal server error.'});
+		});
+});
+
+router.get('/:id',jwtAuth, (req, res) => {
+		User
+		.findById(req.params.id)
+		.populate('badges')
+		.then(user => res.json(user))
+		.catch(err => {
+			console.log(err);
+			res.status(500).json({'error':'Something went horribly awry.'});
+		});
+});
+
+router.put('/:id', jwtAuth, (req, res) => {
+	if(!(req.params.id && req.body._id && req.params.id === req.body._id)){
+		const message = `Request path id (${req.params.id}) and request body id (${req.body._id})
+						must match`;
+		console.error(message);
+		return res.status(400).json({message:message});
+	}
+
+	const toUpdate = {};
+	const updatableFields = ['registeredForCurrenttChallenge',
+							 'lastMeditated',
+							 'streak',
+							 'active',
+							 'isRegisteredForNextChallenge',
+							 'numberOfDaysMeditated',
+							 'badges',
+							 'registeredChallenges'];
+
+	updatableFields.forEach(field => {
+		if(field in req.body){
+			toUpdate[field] = req.body[field];
+		}
+	});
+	console.log(toUpdate);
+	User
+	.findByIdAndUpdate(req.body._id, {$set : toUpdate})
+	.then(user => res.status(204).end())
+	.catch(err => res.status(500).json({message:err.message}));
+
+});
+
 
 module.exports = {router};

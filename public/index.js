@@ -1,13 +1,16 @@
 
-//const serverBase = '//localhost:8080/';
-const serverBase = 'https://shrouded-peak-49521.herokuapp.com/';
-const Users_Url = serverBase + 'users';
-const Audio_Url = serverBase + 'audios';
-const Badge_Url = serverBase + 'badges';
-const Challenge_Url = serverBase + 'challenges';
+const serverBase = '//localhost:8080/';
+//const serverBase = 'https://shrouded-peak-49521.herokuapp.com/';
+const Users_Url = serverBase + 'api/users/';
+const Audio_Url = serverBase + 'api/materials/audios';
+const Badge_Url = serverBase + 'api/materials/badges';
+const Challenge_Url = serverBase + 'api/challenges';
 const SignUp_Url = serverBase + "api/users/signup";
 const Login_Url = serverBase + "api/auth/login";
+const Delete_Url = serverBase + "api/users/remove";
 let user = null;
+let caller = '';
+const audio = $('#player')[0];
 
 
 function handleNavigationClicks(){
@@ -19,6 +22,7 @@ function handleNavigationClicks(){
 	$('#dashboardBtn').click(displayDashboard);
 	$('#challengeBtn').click(challengeReport);
 	$('#meditate-btn').click(meditationPage);
+	$('#delete-btn').click(handleDelete);
 	$('.audio-container').on("click", ".js-text", displayMeditationWindow);
 	$('.js-nextChallenge').click(handleChallengeSignUp);
 	$('#signUp').click(displaySignUp);
@@ -78,20 +82,27 @@ function manageNavAfterLogin(){
 	$('#loginBtn').hide();	
 }
 
-function playAudio(){
-	$('#player')[0].play();
+function playAudio(){	
+	audio.play();
 }
 
-function pauseAudio(){
-	$('#player')[0].pause();
+function pauseAudio(){	
+	if(!audio.paused){
+		audio.pause();
+	}	
 }
 
 function stopAudio(){
-	if(confirm("Are you sure you want to stop this session?")){
-		const audio = $('#player')[0];
-		audio.pause();
-		audio.currentTime = 0;
+	if(!audio.paused){
+		caller = "audioStop";
+		showConfirm("Are you sure you want to end this session?");
 	}	
+}
+
+function stopPlayer(){	
+	audio.pause();
+	audio.currentTime = 0;
+	meditationPage();
 }
 
 function myFunction() {
@@ -116,12 +127,49 @@ function showConfirm(message){
 }
 
 function handleOk(){	
-	signUpUser();
+	switch(caller){
+		case 'delete': 	deleteUser();
+					   	break;
+		case 'signUp': 	signUpUser();
+						break;
+		case 'audioStop' : 	stopPlayer();
+							break;
+		default : break;
+	}
 	$('.confirmClass').hide();
 }
 
 function handleCancel(){
 	$('.confirmClass').hide();
+}
+
+function handleDelete(){
+	caller = "delete";
+	showConfirm("Are you sure you want to delete this account?");	
+}
+
+function deleteUser(){
+	const urlStr = Delete_Url + "/" + JSON.parse(sessionStorage.getItem("userId"));
+	console.log(urlStr);
+	$.ajax({
+		url: Delete_Url + "/" + JSON.parse(sessionStorage.getItem("userId")),
+		method: "DELETE",
+		contentType: "application/json",
+		dataType: 'json',
+		success: userDeleted,
+		error: function(err){
+			console.log(err);
+			showAlert("Unable to delete user. Please try again");
+		}
+	});	
+}
+
+function userDeleted(){	
+	sessionStorage.removeItem('tokenKey');
+	sessionStorage.removeItem('userId');	
+	togglePageManager('.container-home');
+	manageNavBeforeLogin();
+	showAlert("User deleted.");
 }
 
 function togglePlayer(){	
@@ -182,7 +230,7 @@ function handleSignUp(event){
 			success : userSignedUp,
 			error: function(err){
 				const error = JSON.parse(err.responseText);
-				alert(error.location + " " + error.message);
+				showAlert(error.location + " " + error.message);
 			},
 			contentType:'application/json'
 		}); 
@@ -227,7 +275,8 @@ function userSignedUp(data){
 
 function handleChallengeSignUp(){
 	const month = monthNames[new Date().getMonth() + 1];
-	const text = "You will be signed up for " + month + " month's 21-day challenge.";
+	const text = "You will be signed up for " + month + " month's 21-day challenge";
+	callBack = signUpUser;
 	showConfirm(text);	
 }
 
@@ -353,6 +402,11 @@ function meditationPage(){
 		method: 'GET',
 		success: populateAudioFiles,		
 		contentType: 'application/json',
+		dataType: 'json',
+		error: function(err){
+			console.log(err);
+			showAlert(err);
+		},
 		beforeSend:function(xhr){
 			xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("tokenKey"));
 		}		
@@ -367,7 +421,7 @@ function populateAudioFiles(audios){
 								alt="meditation audio" 
 								class="meditation-audio" />
 							<span class="js-text">
-							 <p data-audio='${JSON.stringify(audios[i])}'>${audios[i].name}</p>
+							 <p data-audio='${JSON.stringify(audios[i])}'>${audios[i].name.split(' ')[0]}</p>
 							</span>														
 						  </div>`;		
 		$('.audio-container').append(htmlString);
@@ -410,7 +464,6 @@ function meditationComplete(){
 		console.dir(user);
 		//saveUserObject();
 	}
-		
 }
 
 function saveUserObject(user){
@@ -511,13 +564,28 @@ function checkAndUpdateBadges(user){
 		return;
 	}else{
 		const name = user.streak + '-day';
-		let url = Badge_Url + "/" + name;
-		$.getJSON(url, function(badge){
-			if(badge !== null){
-				user.badges.push(badge);
-			}			
+		const url = Badge_Url + "/" + name;		
+
+		$.ajax({
+			beforeSend:function(xhr){
+				xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("tokenKey"));
+			},
+			url:url,
+			dataType: 'json',
+			method: 'GET',
+			success: function(badge){
+				if(badge !== null){
+					user.badges.push(badge);
+				}
+			},
+			error: showError
 		});
 	}			
+}
+
+function showError(err){
+	console.log(err);
+	showAlert("An error occured. Please try again.");
 }
 
 function checkStreak(lastMeditated){
@@ -762,12 +830,14 @@ function togglePageManager(pageName){
 		$('.playerDiv').hide();
 		$(document.body).addClass("regularBackground");
 		$(document.body).removeClass("backgroundClass");
+		$('#navbarDiv').removeClass("meditate-navbar");		
 	}else{
 		$('.navbarHolder').show();
 		$('#playerHolder').show();
 		$('.playerDiv').show();
 		$(document.body).addClass("backgroundClass");
-		$(document.body).removeClass("regularBackground");
+		$(document.body).removeClass("regularBackground");		
+		$('#navbarDiv').addClass("meditate-navbar");		
 	}
 
 	const pageNames = ['.container-home', 

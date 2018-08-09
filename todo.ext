@@ -6,13 +6,13 @@ Work on dashboard a little. -done
 Change the navigation after user login. -done
 Create a new challenge object. -done
 Make the navbar slide in meditation page -done.
+Clean up the api's.
 
 Pending
 =========
 
 Work on the meditation page styling
 update user object to show the change in challenge object
-Clean up the api's.
 Check the flow
 Fill mock data and check 21 day challenge.
 Make the badges have transparent background.
@@ -31,3 +31,13 @@ Testing
 1. User registers but does not meditate.
 2. User registers but stops in the middle.
 3. User continues actively and completes.
+
+
+Main things
+===========
+
+1. 21-day-challenge page styling.
+2. meditation page styling.(confirm box). - done
+3. delete account. - done
+4. semantic html
+5. Clean code and testing.

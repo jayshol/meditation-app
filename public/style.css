@@ -57,7 +57,7 @@ main{
 	width:90%;
 	height:auto;	
 	background-color: rgba(154, 5, 1,0.75);
-	margin: 60px auto 0 auto;
+	margin: 0 auto;
 	padding:15px;
 	color: white;
 	opacity: 0.75;		
@@ -235,7 +235,7 @@ h3{
 .dateClass{
 	color: #FFD368;
 	font-size: 18px;
-	font-weight:bold;
+	/*font-weight:bold;*/
 	margin:0;
 
 }
@@ -386,6 +386,7 @@ h3{
 	color: white;
 	font-size: 22px;
 	font-weight: bolder;
+	padding:2px;
 }
 
 .js-text:hover{
@@ -515,6 +516,11 @@ label{
     height: 50px;    
 }
 
+.meditate-navbar{
+	background-color: rgba(255,255,255,0.25);
+	border: 1px solid white;
+}
+
 .navbar a {
     float: right;
     font-size: 16px;
@@ -586,10 +592,10 @@ label{
 .navbarHolder, #playerHolder{
 	height: 15px;
 	width: 80px;
-	border: 1px solid #FFD368;
+	border: 1px solid white;
 	display:block;
 	margin: 0 auto;
-	background-color: #FFD368;	
+	background-color: rgba(255,255,255,0.25);	
 	text-align: center;
 	line-height: 15px;
 	font-size: 0;
@@ -660,6 +666,7 @@ label{
 	width: 100px;
 	border-radius: 50%;
 	display: inline-block;
+	cursor:pointer;
 }
 
 .controlBtnDiv{
@@ -679,7 +686,8 @@ label{
 }
 .controlIconDiv>i{
 	font-size: 18px;
-	vertical-align: middle;	
+	vertical-align: middle;
+	cursor:pointer;	
 }
 
 
@@ -769,4 +777,179 @@ progress {
 	width:100%;
 	line-height: 60px;	
 }
+
+#delete-btn{
+	margin:15px 50px;
+	width: 150px;
+	height: 35px;
+	border: 1px solid white;
+	border-radius: 5px;
+	background-color: #FFD368;
+	color: #68051a; 
+	font-size: 14px;
+	font-weight: bold;
+}
+
+@media only screen 
+	and (max-device-width: 640px), 
+    only screen and (max-device-width: 667px), 
+    only screen and (max-width: 480px) {
+
+	.outerDiv{
+		width: 100%;
+		border:0;
+	}
+
+	.container-challenge {
+	    width: 100%;
+	    margin-right: 0px;
+	    margin-left: 0px;
+	    padding: 5px;
+	}
+
+	.nameDivHeader{
+		width:15%;
+	}
+	.hbar{
+		width:85%;
+	}
+
+	.dayHeader{
+		width:2.5%;
+		border:0;
+		font-size: xx-small;
+		line-height: 30px;
+		vertical-align: bottom;
+	}
+	.nameDiv{
+		width:15%;
+	}
+	.dayBarClass{
+		width: 2.5%;		
+	}
+
+	.alertClass{
+		width:65%;
+		left:19%;
+	}
+
+	.login-window, .signup-window{
+		width:auto;
+	}
+
+	.loginForm, .signUpForm{
+		width:auto;
+		height:50%;
+	}
+	.streakCls, .challengeCls{
+		font-size: 16px;
+	}
+
+	.challengeCls{
+		text-align: center;
+	}
+
+	.badgesDiv{
+		width: 100%;
+    	height: auto;    	    
+    	margin: 5px auto 5px auto;
+    	padding: 10px
+	}
+
+	.badge-div{		
+    	width: 75px;    	
+	}
+	.badgeClass{
+		margin: 0 auto;
+	    height: 50px;
+	    width: 60px;	    	    
+	}
+	.achievements{
+		width:100%;
+	}
+	.registered, .completed{
+		width:100%;
+		padding:10px;
+		margin-bottom: 5px;
+	}
+
+	.audio-container{
+		width:100%;
+		height:auto;
+		text-align: center;
+	}
+
+	.image-container{
+		height: 60px;
+		width:60px;
+		margin:10px;
+	}
+
+	.js-text{
+		left:0;
+		height:60px;
+		width: 60px;
+		line-height: 30px;
+		font-size: 12px;
+	}
+
+	.playerDiv{
+		width: 99%;
+	}
+
+}
+/*
+@media only screen and (max-width: 600px),
+		only screen	and (max-width:767px){
+
+	.badgesDiv{
+		width:100%;
+		padding: 10px;
+	}
+	.achievements{
+		width:100%;
+	}
+	.outerDiv{
+		width:100%;
+	}
+
+	.nameDivHeader, .nameDiv{
+		width:15%;
+	}
+	.hbar{
+		width:85%;
+	}
+	.dayHeader{
+		width:3.3%;
+		line-height: 45px;
+		font-size: x-small;
+		vertical-align: text-bottom;
+		border:0;
+	}
+
+	.dayBarClass{
+		width:3.3%;
+	}
+
+	.audio-container{
+		width: 90%;
+		margin: 0px auto 10px auto;
+		height: auto;
+		padding:10px;
+	}
+	.login-window, .signup-window{
+		width:50%;
+	}
+	.loginForm{
+		width:auto;
+	}
+	.confirmClass, .alertClass{
+		width:50%;
+	}		
+	
+}
+
+*/
+
+        
 
