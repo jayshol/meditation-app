@@ -12,7 +12,7 @@ let user = null;
 let caller = '';
 const audio = $('#player')[0];
 
-
+// initializing the application
 function handleNavigationClicks(){
 	$('.js-displaySignup').click(displaySignUp);
 	$('.js-displayLogin').click(displayLogin);
@@ -29,35 +29,34 @@ function handleNavigationClicks(){
 	$('#loginBtn').click(displayLogin);
 	$('#homeBtn').click(function(){
 		togglePageManager('.container-home');
-	});
-	closeAlert();	
-	togglePageManager('.container-home');
-	$(window).click(function(e) {
-	  if (!e.target.matches('.dropbtn')) {	
-	      $('#drop-down').removeClass("show");
-	  }	   
-	});
+	});	
+	
+	$(window).click(handleWindowClick);
 
 	$('.dropbtn').click(handleDropdown);
 
-	$(".navbarHolder").click(toggleNavbar);
-	//$(".navbarHolder").hide();
+	//handling navbar sliding
+	$(".navbarHolder").click(toggleNavbar);	
 	$("#playerHolder").click(togglePlayer);
-	//$("#playerHolder").hide();
-	//$('.playerDiv').hide();
-
+	
+	//handling events of audio player
 	$('.playBtnClass').click(playAudio);
 	$('.js-pause').click(pauseAudio);
 	$('.js-stop').click(stopAudio);
 	$('.js-close').click(closeAlert);
 	$('.js-confirm-close').click(closeConfirm);
+
+	//handling events of alert box
 	$('#ok').click(handleOk);
 	$('#cancel').click(handleCancel);
 	$('#okBtn').click(closeAlert);
 	
+	closeAlert();
 	manageNavBeforeLogin();
+	togglePageManager('.container-home');
 }
 
+//manage navigation bar
 function manageNavBeforeLogin(){
 	$('.dropdown').hide();
 	$('#challengeBtn').hide();
@@ -76,16 +75,19 @@ function manageNavAfterLogin(){
 	$('#loginBtn').hide();	
 }
 
+//handle audio controls
 function playAudio(){	
 	audio.play();
 }
 
+//handle audio controls
 function pauseAudio(){	
 	if(!audio.paused){
 		audio.pause();
 	}	
 }
 
+//handle audio controls
 function stopAudio(){
 	if(!audio.paused){
 		caller = "audioStop";
@@ -93,6 +95,7 @@ function stopAudio(){
 	}	
 }
 
+//handle audio controls
 function stopPlayer(){	
 	audio.pause();
 	audio.currentTime = 0;
@@ -120,6 +123,14 @@ function showConfirm(message){
 	$('.confirmClass').show();
 }
 
+// Close the dropdown if the user clicks outside of it
+function handleWindowClick(e){	
+  if (!e.target.matches('.dropbtn')) {	
+      $('#drop-down').removeClass("show");
+  }	   	
+}
+
+//handles the Ok, Cancel button of the confirm box
 function handleOk(){	
 	switch(caller){
 		case 'delete': 	deleteUser();
@@ -142,6 +153,7 @@ function handleDelete(){
 	showConfirm("Are you sure you want to delete this account?");	
 }
 
+//close user account
 function deleteUser(){
 	const urlStr = Delete_Url + "/" + JSON.parse(sessionStorage.getItem("userId"));
 	console.log(urlStr);
@@ -153,11 +165,12 @@ function deleteUser(){
 		success: userDeleted,
 		error: function(err){
 			console.log(err);
-			showAlert("Unable to delete user. Please try again");
+			showAlert("Unable to delete user. Please try again.");
 		}
 	});	
 }
 
+//handle the app after closing account
 function userDeleted(){	
 	sessionStorage.removeItem('tokenKey');
 	sessionStorage.removeItem('userId');	
@@ -166,6 +179,7 @@ function userDeleted(){
 	showAlert("User deleted.");
 }
 
+// toggling the audio player display
 function togglePlayer(){	
 	$('.playerDiv').slideToggle("slow");
 	if($("#playerHolder").css('bottom') == '0px'){
@@ -181,8 +195,6 @@ function toggleNavbar(){
 	$('.navbar').slideToggle('slow');
 }
 
-// Close the dropdown if the user clicks outside of it
-
 function displaySignUp(){
 	togglePageManager('.signup-window');
 }
@@ -191,6 +203,7 @@ function displayLogin(){
 	togglePageManager('.login-window');
 }
 
+//loggin in user and generating jwt token
 function loginUser(event){
 	event.preventDefault();
 	
@@ -207,9 +220,9 @@ function loginUser(event){
 		},
 		contentType: 'application/json'
 	});
-		
 }
 
+//signing up the user
 function handleSignUp(event){
 	event.preventDefault();
 	if($('#password').val() !== $('#confirmPassword').val()){
@@ -231,6 +244,7 @@ function handleSignUp(event){
 	}	
 }
 
+//Return form data in the form of an object
 function getFormData(data){
 	const indexed_array = {};
 
@@ -238,23 +252,20 @@ function getFormData(data){
 	   	if(n['name'] !== "confirmPassword"){
 	   		indexed_array[n['name']] = n['value'];
 	   	}    
-   });
-  // console.dir(indexed_array);
+   });  
    return indexed_array;
 }
 
-function generateUserToken(data) {
-	//cdisplayDashboard();onsole.dir(data);
+//Store the token in session storage
+function generateUserToken(data) {	
 	sessionStorage.setItem("tokenKey", data.authToken);
-	sessionStorage.setItem("userId", JSON.stringify(data.user._id));
-	//user = data.user;
-	//meditationPage();
+	sessionStorage.setItem("userId", JSON.stringify(data.user._id));	
 	manageNavAfterLogin();
 	displayDashboard();
 }
 
-function logoutUser(){
-	//alert("hello");
+//Clear the session storage and manage navbar after logout
+function logoutUser(){	
 	sessionStorage.removeItem('tokenKey');
 	sessionStorage.removeItem('userId');	
 	togglePageManager('.container-home');
@@ -267,6 +278,7 @@ function userSignedUp(data){
 	displayLogin();
 }
 
+//sign up a user for 21-day challenge
 function handleChallengeSignUp(){
 	const month = monthNames[new Date().getMonth() + 1];
 	const text = "You will be signed up for " + month + " month's 21-day challenge";
@@ -283,16 +295,9 @@ function signUpUser(){
 				challengeName: challengeName,
 				status: "Not started"
 			}
-	/*		if(! checkIfAlreadySignedUp(challengeName, user)){
-
-			}else{
-				alert("You have already signed up.")
-			}*/
-			user.registeredChallenges.push(regObject);
-			//$.put(Users_Url, user, getChallengeObject);
-			//getChallengeObject();
-			console.dir(user);
-			user = user;
+	
+			user.registeredChallenges.push(regObject);						
+			//user = user;
 			$.ajax({
 				url: Users_Url +"/" + JSON.parse(sessionStorage.getItem("userId")) ,
 				method: 'PUT',
@@ -619,7 +624,7 @@ function getUserObject(callBack){
 		dataType:'json',
 		method: 'GET',
 		success: function(user){
-			user = user;
+		//	user = user;
 			callBack(user);			
 		},
 		contentType: 'application/json',
@@ -652,8 +657,7 @@ function challengeReport(){
 		error:function(err){
 			console.err(err);
 		}
-	})
-
+	});
 }
 
 function handleData(challenge){
@@ -663,7 +667,7 @@ function handleData(challenge){
 		displayUsers(challenge);
 		displayChallengeData(challenge);
 	}else{
-		alert("Challenge is not available");
+		showAlert("Challenge is not available");
 	}
 }
 
