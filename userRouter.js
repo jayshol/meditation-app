@@ -162,7 +162,7 @@ router.put('/:id', jwtAuth, (req, res) => {
 	console.log(toUpdate);
 	User
 	.findByIdAndUpdate(req.body._id, {$set : toUpdate})
-	.then(user => res.status(204).end())
+	.then(user => res.status(201).json(user))
 	.catch(err => res.status(500).json({message:err.message}));
 
 });

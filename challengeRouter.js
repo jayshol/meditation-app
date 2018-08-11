@@ -60,7 +60,7 @@ router.put('/:id', jwtAuth, (req, res)=> {
 			toUpdate[field] = req.body[field];
 		}
 	});
-	console.log(toUpdate);
+	
 	Challenge
 	.findByIdAndUpdate(req.body._id, { $set: toUpdate})
 	.then(challenge => res.status(204).end())

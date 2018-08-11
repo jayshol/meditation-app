@@ -71,12 +71,12 @@
 						<legend>Login</legend>
 						<div>
 							<label for="username">UserName :
-								<input type="text" name="username"  required value="monkey" />
+								<input type="text" name="username" required value="monkey" />
 							</label>
 						</div>
 						<div>
 							<label for="password">Password
-								<input type="password" name="password"  required value="monkey123" />
+								<input type="password" name="password" required value="monkey123" />
 							</label>
 						</div>
 						<div>
@@ -90,8 +90,6 @@
 				<div class="js-data">
 					<p class="streakCls">Currently running a :<span></span> day streak.</p>
 					<p class="streakCls">Number of days meditated :<span></span> days.</p>
-					<p id="signedUp" class="challengeCls">You are registered for 21-day challenge</p>
-					<p id="notSigned" class="challengeCls js-challenge js-nextChallenge">Sign up for next month's 21 day challenge</p>
 					<h2>Badges :</h2>
 				</div>
 								
@@ -110,10 +108,10 @@
 			</section>
 			<section class="container-challenge">
 				<h1>21 Day Challenge</h1>
-				<p>21 day Challenge starts on the first of every month and continues till 21st of each month. Users can sign up for this challenge and win the 21 day challenge badge.</p>
-				<h2 class='js-nextChallenge'>Sign Up for the next challenge</h2>
-				<p>Today is the <span></span> of the challenge</p>
-				<p><span></span> out of the total <span></span> registered users are actively meditating so far.</p>	
+				<p>21 day Challenge starts on the first of every month and continues till 21st of each month. Users can sign up for this challenge and win the 21 day challenge badge.</p>				
+				<h2 class="js-currentChallenge">You are signed up for current challenge</h2>
+				<h2 class='js-nextChallenge'>Sign Up for the next month's challenge</h2>
+				<p><span class="user-span"></span> people have registered for <span class="month-span"></span> month's challenge.</p>	
 				<div class="usersList"></div>								
 			</section>
 			<section class="container-meditate">

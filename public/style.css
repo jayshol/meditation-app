@@ -790,6 +790,10 @@ progress {
 	font-weight: bold;
 }
 
+.js-currentChallenge{
+	display: none;
+}
+
 @media only screen 
 	and (max-device-width: 640px), 
     only screen and (max-device-width: 667px), 

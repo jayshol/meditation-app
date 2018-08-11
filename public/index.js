@@ -1,14 +1,14 @@
 
 const serverBase = '//localhost:8080/';
 //const serverBase = 'https://shrouded-peak-49521.herokuapp.com/';
-const Users_Url = serverBase + 'api/users/';
+const Users_Url = serverBase + 'api/users';
 const Audio_Url = serverBase + 'api/materials/audios';
 const Badge_Url = serverBase + 'api/materials/badges';
 const Challenge_Url = serverBase + 'api/challenges';
 const SignUp_Url = serverBase + "api/users/signup";
 const Login_Url = serverBase + "api/auth/login";
 const Delete_Url = serverBase + "api/users/remove";
-let user = null;
+let localUserObject = null;
 let caller = '';
 const audio = $('#player')[0];
 
@@ -135,7 +135,7 @@ function handleOk(){
 	switch(caller){
 		case 'delete': 	deleteUser();
 					   	break;
-		case 'signUp': 	signUpUser();
+		case 'signUp': 	getUserObject(signUpUser);
 						break;
 		case 'audioStop' : 	stopPlayer();
 							break;
@@ -148,6 +148,7 @@ function handleCancel(){
 	$('.confirmClass').hide();
 }
 
+//displays the confirm box for deleting the user
 function handleDelete(){
 	caller = "delete";
 	showConfirm("Are you sure you want to delete this account?");	
@@ -155,8 +156,7 @@ function handleDelete(){
 
 //close user account
 function deleteUser(){
-	const urlStr = Delete_Url + "/" + JSON.parse(sessionStorage.getItem("userId"));
-	console.log(urlStr);
+	const urlStr = Delete_Url + "/" + JSON.parse(sessionStorage.getItem("userId"));	
 	$.ajax({
 		url: Delete_Url + "/" + JSON.parse(sessionStorage.getItem("userId")),
 		method: "DELETE",
@@ -166,6 +166,9 @@ function deleteUser(){
 		error: function(err){
 			console.log(err);
 			showAlert("Unable to delete user. Please try again.");
+		},
+		beforeSend:function(xhr){
+			xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("tokenKey"));
 		}
 	});	
 }
@@ -197,10 +200,12 @@ function toggleNavbar(){
 
 function displaySignUp(){
 	togglePageManager('.signup-window');
+	$('.signUpForm :input:enabled:visible:first').focus();
 }
 
 function displayLogin(){
 	togglePageManager('.login-window');
+	$('.loginForm :input:enabled:visible:first').focus();
 }
 
 //loggin in user and generating jwt token
@@ -235,10 +240,7 @@ function handleSignUp(event){
 			dataType:'json',
 			data : JSON.stringify(formData),
 			success : userSignedUp,
-			error: function(err){
-				const error = JSON.parse(err.responseText);
-				showAlert(error.location + " " + error.message);
-			},
+			error: showError,
 			contentType:'application/json'
 		}); 
 	}	
@@ -259,7 +261,10 @@ function getFormData(data){
 //Store the token in session storage
 function generateUserToken(data) {	
 	sessionStorage.setItem("tokenKey", data.authToken);
-	sessionStorage.setItem("userId", JSON.stringify(data.user._id));	
+	sessionStorage.setItem("userId", JSON.stringify(data.user._id));
+	$('.loginForm').find('input:text, input:password').val('');
+	localUserObject = null;
+	resetNextChallenge();
 	manageNavAfterLogin();
 	displayDashboard();
 }
@@ -267,14 +272,17 @@ function generateUserToken(data) {
 //Clear the session storage and manage navbar after logout
 function logoutUser(){	
 	sessionStorage.removeItem('tokenKey');
-	sessionStorage.removeItem('userId');	
+	sessionStorage.removeItem('userId');
+	localUserObject = null;	
 	togglePageManager('.container-home');
 	manageNavBeforeLogin();
 	showAlert("You are successfully logged out.");	
 }
 
+// success message after sign up.
 function userSignedUp(data){
 	showAlert("You are signed Up. Please log in.");
+	$('.signUpForm').find('input:text, input:password').val('');
 	displayLogin();
 }
 
@@ -282,68 +290,62 @@ function userSignedUp(data){
 function handleChallengeSignUp(){
 	const month = monthNames[new Date().getMonth() + 1];
 	const text = "You will be signed up for " + month + " month's 21-day challenge";
-	callBack = signUpUser;
+	caller = "signUp";
 	showConfirm(text);	
 }
 
-function signUpUser(){
-	getUserObject(function(user){
-		if(user !== null){
-			user.isRegisteredForNextChallenge = true;
-			const challengeName = monthNames[new Date().getMonth() + 1] + "-" + new Date().getFullYear();
-			const regObject = {
-				challengeName: challengeName,
-				status: "Not started"
-			}
-	
-			user.registeredChallenges.push(regObject);						
-			//user = user;
-			$.ajax({
-				url: Users_Url +"/" + JSON.parse(sessionStorage.getItem("userId")) ,
-				method: 'PUT',
-				data: JSON.stringify(user),
-				success: function(data){						
-					getChallengeObject(user);
-				},
-				dataType: 'json',
-				contentType: 'application/json',
-				beforeSend:function(xhr){
-					xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("tokenKey"));
-				}
-			}); 
+//register user for the 21-day challenge and update both
+//user as well as challenge objects
+function signUpUser(user){		
+	if(user !== null){
+		user.isRegisteredForNextChallenge = true;
+		const challengeName = monthNames[new Date().getMonth() + 1] + "-" + new Date().getFullYear();
+		const regObject = {
+			challengeName: challengeName,
+			status: "Not started"
 		}
-	});		
+
+		user.registeredChallenges.push(regObject);
+		localUserObject = user;
+
+		//update the user object with the new challenge sign up
+		$.ajax({
+			url: Users_Url +"/" + JSON.parse(sessionStorage.getItem("userId")) ,
+			method: 'PUT',
+			data: JSON.stringify(user),
+			success: getChallengeObject,
+			dataType: 'json',
+			contentType: 'application/json',
+			beforeSend:function(xhr){
+				xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("tokenKey"));
+			}
+		}); 
+	}	
 }
 
-function getChallengeObject(user){
-	user = user;
-	//console.dir(user);
+function getChallengeObject(){	
 	const challengeName = monthNames[new Date().getMonth() + 1] + "-" + new Date().getFullYear();
-	const url = Challenge_Url + "/" + challengeName;
-	//console.log(url);
-	//$.getJSON(url, updateChallenges);
-
+	const url = Challenge_Url + "/" + challengeName;	
 	$.ajax({
 		url: url,
 		method: "GET",
 		dataType: 'json',
 		contentType: 'application/json',
-		success: function(challenge){
-			updateChallenges(challenge, user);
-		},
+		success: updateChallenges,
+		error: showError,
 		beforeSend:function(xhr){
 			xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("tokenKey"));
 		}
 	});
 }
 
-function updateChallenges(challenge, user){
-	//let challengeObject;
-	console.dir(user);
+
+//update challenge object with the registered user
+function updateChallenges(challenge){	
 	if(challenge === null){
 		const name = monthNames[new Date().getMonth() + 1] + "-" + new Date().getFullYear();
 		const usersArray = [];
-		usersArray.push(user);
+		usersArray.push(localUserObject);
 
 		const newObject = {
 			name : name,
@@ -352,17 +354,12 @@ function updateChallenges(challenge, user){
 			endDate : formatDate((new Date().getMonth()+2) + "/21/" + new Date().getFullYear()),
 			status : "Not Started"
 		}
-	//	challengeObject = newObject;
-		console.dir(newObject);
 
 		$.ajax({
 			url: Challenge_Url,
 			method: 'POST',
 			data: JSON.stringify(newObject),
-			success: function(){
-				alert("You are signed up.");
-				displayDashboard();
-			},
+			success: signUpSuccess,
 			dataType: 'json',
 			contentType:'application/json',
 			beforeSend:function(xhr){
@@ -371,28 +368,30 @@ function updateChallenges(challenge, user){
 		});
 		
 	} else{
-		challenge.registeredUsers.push(user);
-		//challengeObject = challenge;
-		console.dir(challenge);
+		challenge.registeredUsers.push(localUserObject);				
 		$.ajax({
 			url :Challenge_Url + "/" + challenge._id,
 			method: "PUT",
 			data : JSON.stringify(challenge),
-			success : function(data){
-				alert("User signed up");
-			},
+			success : signUpSuccess,
 			dataType : 'json',
 			contentType: 'application/json',
 			beforeSend:function(xhr){
 				xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("tokenKey"));
 			},
 			error: function(err){
-				console.error(err);
+				console.log(err);
 			}
 		}); 
 	}	
 }
 
+function signUpSuccess(){
+	showAlert("You are signed up.");	
+	updateNextChallenge();
+}
+
+//fetches meditation audio files
 function meditationPage(){
 	togglePageManager('.container-meditate');
 
@@ -402,16 +401,14 @@ function meditationPage(){
 		success: populateAudioFiles,		
 		contentType: 'application/json',
 		dataType: 'json',
-		error: function(err){
-			console.log(err);
-			showAlert(err);
-		},
+		error: showError,
 		beforeSend:function(xhr){
 			xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("tokenKey"));
 		}		
 	});	 							
 }
 
+//displays meditation audio files
 function populateAudioFiles(audios){
 	$(".audio-container").html('');
 	for(let i=0;i<audios.length;i++){
@@ -429,39 +426,28 @@ function populateAudioFiles(audios){
 
 function displayMeditationWindow(event){
 	togglePageManager('.meditation-window');	
-//	$('.navbarHolder').show();
-//	$('#playerHolder').show();
-//	$('.playerDiv').show();
-	//$('.meditation-window').addClass("backgroundClass");
-	//console.log(event.target);
-	const dataObj = $(event.target).data("audio");
-	//$('.meditation-window').find('h2').text(dataObj.name);
+	const dataObj = $(event.target).data("audio");	
 	const audio = $('#player');
 	$('#audio-src').attr("src", dataObj.url);
 	audio[0].pause();
 	audio[0].load();
-	$('progress').value = 0;
-	//audio[0].oncanplaythrough = audio[0].play();
+	$('progress').value = 0;	
 	$(audio[0]).on("timeupdate", updateProgress);
 	$(audio[0]).on("ended", meditationComplete);
 }
+
+// update the progress bar as the audio plays
 function updateProgress(){	
-	const audio = $('#player')[0];
-	//console.log($('progress').attr("value"));
+	const audio = $('#player')[0];	
 	$('progress').attr("value", Math.floor(audio.currentTime / audio.duration * 100));
 }
 
 function meditationComplete(){
-	$(this).currentTime = 0;
-	console.log("ended");
-	console.log(user);
-	if(user === null){
+	$(this).currentTime = 0;	
+	if(localUserObject === null){
 		getUserObject(updateUserData);
 	}else{
-		updateUserData();
-		//getUserObject(updateUserData);
-		console.dir(user);
-		//saveUserObject();
+		updateUserData(localUserObject);						
 	}
 }
 
@@ -473,14 +459,10 @@ function saveUserObject(user){
 		contentType: 'application/json',
 		data : JSON.stringify(user),
 		success : function(){
-			alert("User updated");
+			showAlert("Session Completed.");
 			meditationPage();
-
 		},
-		error: function(err){
-			console.error(err);
-			alert("Unable to update user.");
-		},
+		error: showError,
 		beforeSend:function(xhr){
 			xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("tokenKey"));
 		}
@@ -490,12 +472,14 @@ function saveUserObject(user){
 function updateUserData(user){	
 	if(user !== null){		
 		const todaysDate = new Date();
+		//user has already meditated today(no need to record)
 		if(user.lastMeditated !== formatDate(todaysDate)){
 			if(user.lastMeditated === undefined){			
 				user = firstTimeUser(user);				
 			} else{
 				user.numberOfDaysMeditated += 1;
 				if(checkStreak(user.lastMeditated)){
+					//increment steak
 					user.streak += 1;
 					if(user.registeredForCurrentChallenge && user.active){
 						user.active = true;
@@ -504,9 +488,10 @@ function updateUserData(user){
 					}
 					checkAndUpdateBadges(user);
 				}else{
+					//user meditating after a gap
 					user.streak = 1;
 					if(user.registeredForCurrentChallenge){
-						if(todaysDate.getDate === 1){
+						if(todaysDate.getDate() === 1){
 							user.active = true;
 						}else{
 							user.active = false;
@@ -514,7 +499,7 @@ function updateUserData(user){
 					}
 				}
 				user.lastMeditated = formatDate(todaysDate);
-				if(todaysDate.getDate() >= 1 && todaysDate.getDate() <= 21){
+				if(todaysDate.getDate() >= 1 && todaysDate.getDate() <= 21 && user.active){
 					updateChallengeInfo("lastMeditated", formatDate(todaysDate), user);
 				}				
 			}	
@@ -533,7 +518,7 @@ function updateUserData(user){
 		}
 		saveUserObject(user);
 	}else{
-		alert("Please login before you meditate");
+		showAlert("Please login before you meditate");
 		togglePageManager('login-window');
 	}	
 }
@@ -583,17 +568,15 @@ function checkAndUpdateBadges(user){
 }
 
 function showError(err){
-	console.log(err);
-	showAlert("An error occured. Please try again.");
+	const error = JSON.parse(err.responseText);
+	showAlert(error.location + " " + error.message);
 }
 
-function checkStreak(lastMeditated){
-	//console.log(new Date(lastMeditated));
-	//console.log(new Date());	
+//checks if the user is continually meditating
+function checkStreak(lastMeditated){		
 	const date1 = Date.parse(lastMeditated);
 	const date2 = Date.parse(formatDate(new Date()));
-	const diff = parseInt(date2 - date1);
-	console.log(diff);
+	const diff = parseInt(date2 - date1);	
 	if(diff === 86400000){
 		return true;
 	}else{
@@ -601,47 +584,38 @@ function checkStreak(lastMeditated){
 	}	
 }
 
-function formatDate(dateString){
-	
-	const dateObject = (dateString !== undefined) ? new Date(dateString) : new Date();
-		 console.dir(dateObject);
-	const	month = (dateObject.getMonth()+1) < 10 ? "0" + (dateObject.getMonth()+1) : dateObject.getMonth()+1;
-	const date = (dateObject.getDate() < 10) ? "0" + dateObject.getDate() : dateObject.getDate();
-	//console.log(formattedDate);
-	
-	const formattedDate = month +"/" + date + "/" + dateObject.getFullYear();
-
-	console.log(formattedDate);
+//format the date pattern to store in the database
+function formatDate(dateString){	
+	const dateObject = (dateString !== undefined) ? new Date(dateString) : new Date();		 
+	const month = (dateObject.getMonth()+1) < 10 ? "0" + (dateObject.getMonth()+1) : dateObject.getMonth()+1;
+	const date = (dateObject.getDate() < 10) ? "0" + dateObject.getDate() : dateObject.getDate();		
+	const formattedDate = month +"/" + date + "/" + dateObject.getFullYear();	
 	return formattedDate;
 }
 
-
-function getUserObject(callBack){
-	const url = Users_Url + "/" + JSON.parse(sessionStorage.getItem("userId"));
-	//console.log(url);
-	$.ajax({
-		url:url,
-		dataType:'json',
-		method: 'GET',
-		success: function(user){
-		//	user = user;
-			callBack(user);			
-		},
-		contentType: 'application/json',
-		error: function(err){
-			console.error(err);
-		},
-		beforeSend:function(xhr){
-			xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("tokenKey"));
-		}
-	});
-
+//Retrieve the user object from the database and invoke the passed callBack function with it.
+//If it is already available just invoke the callBack with it.
+function getUserObject(callBack){	
+	if(localUserObject !== null){
+		callBack(localUserObject);
+	}else{
+		const url = Users_Url + "/" + JSON.parse(sessionStorage.getItem("userId"));			
+		$.ajax({
+			url:url,
+			dataType:'json',
+			method: 'GET',
+			success: callBack,
+			contentType: 'application/json',
+			error: showError,
+			beforeSend:function(xhr){
+				xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("tokenKey"));
+			}
+		});
+	}	
 }
 
-
+//Fetch the data of the 21-day challenge from database
 function challengeReport(){
-	
-	//$('.container-challenge').show();
 	togglePageManager('.container-challenge');
 	const challengeName = getCurrentChallengeName();
 	const url = Challenge_Url + "/" + challengeName;
@@ -654,14 +628,12 @@ function challengeReport(){
 		beforeSend:function(xhr){
 			xhr.setRequestHeader("Authorization", "Bearer " + sessionStorage.getItem("tokenKey"));
 		},
-		error:function(err){
-			console.err(err);
-		}
+		error:showError
 	});
 }
 
-function handleData(challenge){
-	//console.log(challenge);
+//display the 21-day challenge
+function handleData(challenge){	
 	if(challenge !== null){	
 		sortChallengeData(challenge);
 		displayUsers(challenge);
@@ -672,23 +644,27 @@ function handleData(challenge){
 }
 
 function displayChallengeData(challenge){
-	
+	if(isRegistered(getCurrentChallengeName())){
+		$(".js-currentChallenge").show();
+	}else{
+		$(".js-currentChallenge").hide();
+	}
+
+	if(isRegistered(getNextChallengeName())){
+		updateNextChallenge();
+	}		
 	const hbars = $('.hbar');
 	for(let i=0;i<challenge.registeredUsers.length;i++){
 		const user = challenge.registeredUsers[i];
-		const elements = $(hbars[i+1]).find('.dayBarClass');
-		
+		const elements = $(hbars[i+1]).find('.dayBarClass');		
+		//if the user has meditated then display
 		if(getLastMeditatedDate(user) !== undefined){
 			const lastMeditatedDate = new Date(user.lastMeditated);
 			const days_meditated = getLastMeditatedDate(user);
 			const month = getLastMeditatedMonth(user);
-			const year = getLastMeditatedYear(user);
-			//console.log(month + ' ' + new Date().getMonth());
-			//console.log(year + ' ' + new Date().getFullYear());
-		//	if(new Date().getMonth() === month && new Date().getFullYear() === year){
+			const year = getLastMeditatedYear(user);					
 			if(new Date().getFullYear() === year){
-				for(let j=0;j<days_meditated;j++){
-					//console.log(j);
+				for(let j=0;j<days_meditated;j++){								
 					if(user.active){
 						$(elements[j]).css('background-color', "#FFD368");
 					}else{
@@ -700,9 +676,9 @@ function displayChallengeData(challenge){
 	} 
 }
 
+//Sorts the users in descending order based on their days of meditation
 function sortChallengeData(challenge){
-	function compare(a, b){
-		
+	function compare(a, b){		
 		const aDate = getLastMeditatedDate(a);		
 		const bDate = getLastMeditatedDate(b);
 		if(a.lastMeditated !== undefined && b.lastMeditated !== undefined){
@@ -728,6 +704,7 @@ function sortChallengeData(challenge){
 	challenge.registeredUsers.sort(compare);
 }
 
+//Retrieves the last meditated date with regard to the registered challenge
 function getLastMeditatedDate(user){
 	const challengeName = getCurrentChallengeName();
 	for(let i=0;i<user.registeredChallenges.length;i++){
@@ -741,6 +718,7 @@ function getLastMeditatedDate(user){
 	}
 }
 
+//returns the full year of the date the user last meditated
 function getLastMeditatedYear(user){
 	const challengeName = getCurrentChallengeName();
 	for(let i=0;i<user.registeredChallenges.length;i++){
@@ -754,6 +732,7 @@ function getLastMeditatedYear(user){
 	}
 }
 
+//returns the month of the last meditated date
 function getLastMeditatedMonth(user){
 	const challengeName = getCurrentChallengeName();
 	for(let i=0;i<user.registeredChallenges.length;i++){
@@ -768,12 +747,15 @@ function getLastMeditatedMonth(user){
 }
 
 function getCurrentChallengeName(){
-	//return monthNames[new Date().getMonth()] + "-" + new Date().getFullYear();
-	return "Jul-2018";
+	return monthNames[new Date().getMonth()] + "-" + new Date().getFullYear();	
 }
 
-function displayUsers(challenge){
-	//console.dir(challengeData.registeredUsers);
+function getNextChallengeName(){
+	return monthNames[new Date().getMonth()+1] + "-" + new Date().getFullYear();
+}
+
+//displays the users who have registered for the challenge
+function displayUsers(challenge){	
 	let htmlString = "<div class='outerDiv'>";
 	htmlString += createHeader();
 	for(let i=0;i<challenge.registeredUsers.length;i++){
@@ -790,6 +772,7 @@ function displayUsers(challenge){
 	$('.usersList').html(htmlString);
 }
 
+//creates the header for displaying the challenge data
 function createHeader(){
 	let headerString = `<div class="barDiv"><div class='nameDivHeader'></div><div class='hbar'>`;
 	for(let i=0;i<21;i++){
@@ -801,25 +784,12 @@ function createHeader(){
 }
 
 
-function displayDashboard(){
-	//alert("hi");
-	togglePageManager('.container-dashboard');
-	//const resourceURL = Users_Url + "/" + userId;
-	if(user === null){
-		getUserObject(populateDashboard);
-		//console.dir(user);
-	}else{
-		populateDashboard(user);
-	}
-	/*$.getJSON(resourceURL, function(user){
-		console.dir(user);
-		populateDashboard(user);
-	}); */
-
-	//populateDashboard();
-	
+function displayDashboard(){	
+	togglePageManager('.container-dashboard');	
+	getUserObject(populateDashboard);		
 }
 
+//handles the display of pages based on navigation
 function togglePageManager(pageName){
 	
 	if(pageName !== '.meditation-window'){
@@ -857,7 +827,10 @@ function togglePageManager(pageName){
 }
 
 function populateDashboard(user){
-	//console.dir(user);
+	if(localUserObject === null){
+		localUserObject = user;
+	}
+	
 	$('.badgesDiv').html('');
 	for(let i=0;i<user.badges.length;i++){
 		let htmlString = "<div class='badge-div'><div class='badgeClass'><img src='" + user.badges[i].imageUrl + "' alt='badge image' /></div><span>" + user.badges[i].name + "</span></div>";
@@ -868,27 +841,29 @@ function populateDashboard(user){
 	}
 
 	$('.streakCls').first().find('span').text(user.streak || 0);
-	$('.streakCls').next().find('span').text(user.numberOfDaysMeditated || 0);
-	
-	if(user.isRegisteredForCurrent === 'yes'){
-		$('.challengeCls').first().show();
-	}else{
-		$('.challengeCls').first().hide();
+	$('.streakCls').next().find('span').text(user.numberOfDaysMeditated || 0);		
+
+	fillAchievements(user.registeredChallenges);		
+}
+
+
+function updateNextChallenge(){
+	$(".js-nextChallenge").text("You are registered for " + getNextChallengeName() + " challenge.");		
+	$('.js-nextChallenge').unbind("click");
+}
+
+function resetNextChallenge(){
+	$(".js-nextChallenge").text("Sign Up for the next month's challenge");
+	$('.js-nextChallenge').click(handleChallengeSignUp);
+}
+
+function isRegistered(challengeName){
+	for(let i=0;i<localUserObject.registeredChallenges.length;i++){
+		if(localUserObject.registeredChallenges[i].challengeName === challengeName){			
+			return true;
+		}
 	}
-
-	if(user.isRegisteredForNextChallenge){
-		$('#signedUp').show();
-		$('#notSigned').hide();
-	} else{
-		$('#signedUp').hide();
-		$('#notSigned').show();
-	}
-
-	//$('.js-challenge').text(str); 	
-
-	fillAchievements(user.registeredChallenges);
-	//fillAchievements('.completed', user.completedChallenges);
-	
+	return false;
 }
 
 function fillAchievements( array){
