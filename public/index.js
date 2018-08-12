@@ -853,11 +853,13 @@ function populateDashboard(user){
 function updateNextChallenge(){
 	$(".js-nextChallenge").text("You are registered for " + getNextChallengeName() + " challenge.");		
 	$('.js-nextChallenge').unbind("click");
+	$(".js-nextChallenge").css("cursor", "default");
 }
 
 function resetNextChallenge(){
 	$(".js-nextChallenge").text("Sign Up for the next month's challenge");
 	$('.js-nextChallenge').click(handleChallengeSignUp);
+	$('.js-nextChallenge').css("cursor","pointer");
 }
 
 function isRegistered(challengeName){
