@@ -6,7 +6,7 @@ Users have to register in the application inorder to meditate. They can login da
 
 ## Demo
 
-Live demo
+[Live demo](https://shrouded-peak-49521.herokuapp.com/)
 
 #### Notes:
 
