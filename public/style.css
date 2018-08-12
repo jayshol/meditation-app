@@ -18,7 +18,7 @@ body{
 .regularBackground{
 	background: url("/images/meditation.jpg") no-repeat fixed center;
 	background-size: cover;
-	height:100vh;		
+	height:73vh;		
 	width: 100%;
 }
 
@@ -54,7 +54,7 @@ main{
 }
 
 .container-dashboard{
-	width:90%;
+	width:100%;
 	height:auto;	
 	background-color: rgba(154, 5, 1,0.75);
 	margin: 0 auto;
@@ -243,7 +243,7 @@ h3{
 
 .outerDiv{
 	height:auto;
-	width:82%;
+	width:100%;
 	/*border: 1px solid white;*/
 	margin: 0 auto;	
 }
@@ -309,7 +309,7 @@ h3{
 	width:100%;
 	/*border: 1px solid blue;*/
 	margin:0;
-	padding:0;
+	padding:2px;
 	line-height: 37px;
 	vertical-align: top;
 
@@ -344,7 +344,7 @@ h3{
 .backgroundClass{
 	background: url("/images/meditation-bg.jpg") no-repeat fixed center;
 	background-size: cover;
-	height:100vh;		
+	height:73vh;		
 	width: 100%;
 }
 
@@ -414,8 +414,8 @@ h3{
 /* sign up form */
 
 .signup-window, .login-window {
-	width: 40%;
-	height: 50%;
+	width: 350px;
+	height: auto;
 	margin:150px auto 0 auto;
 	color: white;
 	font-size: 20px;
@@ -424,8 +424,8 @@ h3{
 }
 
 .login-window{
-	width:35%;
-	height:35%;
+	width:350px;
+	height:auto;
 }
 
 .signup-window div, .login-window div{
@@ -441,7 +441,13 @@ h2.textClass{
 	font-size: 30px;
 	color: black;
 }
-
+p.textClass{
+	font-size: 20px;
+}
+.challengeHeader{
+	font-size: 24px;
+	font-weight: bold;
+}
 
 /*progress circle */
 
@@ -470,13 +476,12 @@ h2.textClass{
 .loginForm{
 	width:300px;
 	height:350px;
+	padding: 25px 0 0 0;
 }
 
-fieldset{
-	
-  padding: 25px;
+fieldset{	
+  padding: 25px;  
   border:0;
-
 }
 
 legend{
@@ -725,7 +730,7 @@ progress {
 	height:60%;
 	width:100%;
 	border:1px solid transparent;
-	line-height: 16px;
+	line-height: 25px;
 }
 
 .messageCls{
@@ -779,7 +784,7 @@ progress {
 }
 
 #delete-btn{
-	margin:15px 50px;
+	margin:15px 60px;
 	width: 150px;
 	height: 35px;
 	border: 1px solid white;
@@ -794,10 +799,18 @@ progress {
 	display: none;
 }
 
-@media only screen 
-	and (max-device-width: 640px), 
-    only screen and (max-device-width: 667px), 
-    only screen and (max-width: 480px) {
+.container-challenge > h1{
+	text-align: center;
+}
+
+.defineChallenge{
+	font-size: 22px;
+}
+
+
+@media only screen  and (max-device-width: 640px),
+    only screen and (max-device-width: 667px),
+    only screen and (max-width: 480px)  { 
 
 	.outerDiv{
 		width: 100%;
@@ -809,6 +822,7 @@ progress {
 	    margin-right: 0px;
 	    margin-left: 0px;
 	    padding: 5px;
+	    height:100%;
 	}
 
 	.nameDivHeader{
@@ -838,7 +852,7 @@ progress {
 	}
 
 	.login-window, .signup-window{
-		width:auto;
+	/*	width:auto;*/
 	}
 
 	.loginForm, .signUpForm{
@@ -861,7 +875,7 @@ progress {
 	}
 
 	.badge-div{		
-    	width: 75px;    	
+    	width: 65px;    	
 	}
 	.badgeClass{
 		margin: 0 auto;
@@ -902,7 +916,7 @@ progress {
 	}
 
 }
-/*
+
 @media only screen and (max-width: 600px),
 		only screen	and (max-width:767px){
 
@@ -922,9 +936,10 @@ progress {
 	}
 	.hbar{
 		width:85%;
+		padding-left:10px;
 	}
 	.dayHeader{
-		width:3.3%;
+		width:2.3%;
 		line-height: 45px;
 		font-size: x-small;
 		vertical-align: text-bottom;
@@ -932,7 +947,7 @@ progress {
 	}
 
 	.dayBarClass{
-		width:3.3%;
+		width:2.3%;
 	}
 
 	.audio-container{
@@ -942,18 +957,71 @@ progress {
 		padding:10px;
 	}
 	.login-window, .signup-window{
-		width:50%;
+	/*	width:50%; */
+		margin:60px auto 0 auto;
 	}
 	.loginForm{
 		width:auto;
 	}
 	.confirmClass, .alertClass{
-		width:50%;
-	}		
+		width:70%;
+	}
+
+	.alertClass > div:nth-child(2) {
+		margin:0;
+		height:50%;
+	}
+	.messageClass{
+		margin:0;
+	}
+
+	.confirmClass {
+    	width: 60%;
+    	left: 20%;
+    	height:auto;
+    	padding-bottom: 10px;
+	}
+	.messageDiv{
+  		line-height: 25px;
+  		height:50%;
+  	}		
 	
 }
 
-*/
+@media only screen 
+  and (min-device-width: 834px) 
+  and (max-device-width: 1112px)
+  and (-webkit-min-device-pixel-ratio: 2)  {
+  	.messageDiv{
+  		line-height: 85px;
+  	}
+}
+
+@media only screen 
+  and (min-device-width: 768px) 
+  and (max-device-width: 1024px) 
+  and (-webkit-min-device-pixel-ratio: 1) {
+  	.confirmClass, .alertClass{
+		width:50%;
+		left:25%;
+	}
+
+	.alertClass > div:nth-child(2) {
+		margin: 0;
+	    height: 65%;
+	    line-height: 140px;
+	    vertical-align: middle;
+	}
+	.messageClass{
+		margin:0;
+		font-size:22px;
+	}
+	.caption{
+		font-size: 20px;
+	}
+}
+
+
 
         
 

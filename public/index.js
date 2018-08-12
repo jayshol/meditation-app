@@ -652,7 +652,9 @@ function displayChallengeData(challenge){
 
 	if(isRegistered(getNextChallengeName())){
 		updateNextChallenge();
-	}		
+	}
+	$(".month-span").text(fullMonthNames[new Date().getMonth()]);
+	$(".user-span").text(challenge.registeredUsers.length);
 	const hbars = $('.hbar');
 	for(let i=0;i<challenge.registeredUsers.length;i++){
 		const user = challenge.registeredUsers[i];
@@ -880,7 +882,7 @@ function fillAchievements( array){
 }
 
 const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
+const fullMonthNames =['January', 'February', 'March','April','May','June','July','August','September','October','November','December'];
 
 $(function(){	
 	handleNavigationClicks();
