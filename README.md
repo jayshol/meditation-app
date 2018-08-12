@@ -12,23 +12,23 @@ Live demo
 
 ### Home page
 
-![homepage](/images/homePage.png)
+![homepage](/public/images/homePage.png)
 
 ### Dashboard
 
-![dashboard](/images/dashboard.png)
+![dashboard](/public/images/dashboard.png)
 
 ### Audios
 
-![audios](/images/audios.png)
+![audios](/public/images/audios.png)
 
 ### Meditation player
 
-![player](/images/player.png)
+![player](/public/images/player.png)
 
 ### 21-Day Challenge
 
-![audios](/images/21-day.png)
+![audios](/public/images/21-day.png)
 
 ### Features
 
