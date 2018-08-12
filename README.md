@@ -8,6 +8,16 @@ Users have to register in the application inorder to meditate. They can login da
 
 Live demo
 
+#### Notes:
+
+The following users are already available to check the application:
+
+UserName		Password
+monkey			monkey123
+test			test123
+pinky			pinky123
+lolo			lolo123
+
 ## Screenshots
 
 ### Home page
@@ -24,7 +34,7 @@ Live demo
 
 ### Meditation player
 
-![player](/public/images/player.png)
+![player](/public/images/meditationPlayer.png)
 
 ### 21-Day Challenge
 
