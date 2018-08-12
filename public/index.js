@@ -834,6 +834,7 @@ function populateDashboard(user){
 	}
 	
 	$('.badgesDiv').html('');
+	
 	for(let i=0;i<user.badges.length;i++){
 		let htmlString = "<div class='badge-div'><div class='badgeClass'><img src='" + user.badges[i].imageUrl + "' alt='badge image' /></div><span>" + user.badges[i].name + "</span></div>";
 		$('.badgesDiv').append(htmlString);
