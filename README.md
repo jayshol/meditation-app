@@ -46,6 +46,8 @@ The application also motivates the users to meditate daily by awarding them a va
 
 Apart from this, every month there is a 21 day challenge program. It starts on the first of every month and continues till the 21 day. Users can sign up for this program and make meditation a habbit. They can also check the progress of the fellow participants of this program ** 21-Day Challenge Page ** .
 
+In the meditation window, both the navigation bar as well as the player controls can be slide toggled to have a clear screen for uninterrupted meditation.
+
 
 ## Built With
 
