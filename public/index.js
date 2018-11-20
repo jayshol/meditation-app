@@ -1,6 +1,6 @@
 
-//const serverBase = '//localhost:8080/';
-const serverBase = 'https://shrouded-peak-49521.herokuapp.com/';
+const serverBase = '//localhost:8080/';
+//const serverBase = 'https://shrouded-peak-49521.herokuapp.com/';
 const Users_Url = serverBase + 'api/users';
 const Audio_Url = serverBase + 'api/materials/audios';
 const Badge_Url = serverBase + 'api/materials/badges';
@@ -800,14 +800,16 @@ function togglePageManager(pageName){
 		$('.playerDiv').hide();
 		$(document.body).addClass("regularBackground");
 		$(document.body).removeClass("backgroundClass");
-		$('#navbarDiv').removeClass("meditate-navbar");		
+		$('#navbarDiv').removeClass("meditate-navbar");
+		$('#drop-down').removeClass('meditate-dropdown-content');
 	}else{
 		$('.navbarHolder').show();
 		$('#playerHolder').show();
 		$('.playerDiv').show();
 		$(document.body).addClass("backgroundClass");
 		$(document.body).removeClass("regularBackground");		
-		$('#navbarDiv').addClass("meditate-navbar");		
+		$('#navbarDiv').addClass("meditate-navbar");
+		$('#drop-down').addClass('meditate-dropdown-content');
 	}
 
 	const pageNames = ['.container-home', 
