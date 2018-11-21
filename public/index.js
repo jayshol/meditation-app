@@ -127,7 +127,9 @@ function showConfirm(message){
 function handleWindowClick(e){	
   if (!e.target.matches('.dropbtn')) {	
       $('#drop-down').removeClass("show");
-  }	   	
+  }
+  closeConfirm();
+  closeAlert();
 }
 
 //handles the Ok, Cancel button of the confirm box
