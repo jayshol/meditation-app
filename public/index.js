@@ -24,7 +24,7 @@ function handleNavigationClicks(){
 	$('#meditate-btn').click(meditationPage);
 	$('#delete-btn').click(handleDelete);
 	$('.audio-container').on("click", ".js-text", displayMeditationWindow);
-	$('.js-nextChallenge').click(handleChallengeSignUp);
+	$('.js-nextChallenge').on("click", handleChallengeSignUp);
 	$('#signUp').click(displaySignUp);
 	$('#loginBtn').click(displayLogin);
 	$('#homeBtn').click(function(){
@@ -108,9 +108,10 @@ function handleDropdown() {
 
 function closeAlert(){
 	$('.alertClass').hide();
+	return false;
 }
 function closeConfirm(){
-	$('.confirmClass').hide();
+	$('.confirmClass').hide();	
 }
 
 function showAlert(message){
@@ -128,7 +129,7 @@ function handleWindowClick(e){
   if (!e.target.matches('.dropbtn')) {	
       $('#drop-down').removeClass("show");
   }
-  closeConfirm();
+
   closeAlert();
 }
 
@@ -278,7 +279,8 @@ function logoutUser(){
 	localUserObject = null;	
 	togglePageManager('.container-home');
 	manageNavBeforeLogin();
-	showAlert("You are successfully logged out.");	
+	showAlert("You are successfully logged out.");
+	return false;	
 }
 
 // success message after sign up.
@@ -289,11 +291,12 @@ function userSignedUp(data){
 }
 
 //sign up a user for 21-day challenge
-function handleChallengeSignUp(){
+function handleChallengeSignUp(event){
 	const month = monthNames[new Date().getMonth() + 1];
 	const text = "You will be signed up for " + month + " month's 21-day challenge";
 	caller = "signUp";
-	showConfirm(text);	
+	showConfirm(text);
+	return false;	
 }
 
 //register user for the 21-day challenge and update both
@@ -641,7 +644,12 @@ function handleData(challenge){
 		displayUsers(challenge);
 		displayChallengeData(challenge);
 	}else{
-		showAlert("Challenge is not available");
+		//showAlert("Challenge is not available");
+		$(".month-span").text(fullMonthNames[new Date().getMonth()]);
+		$(".user-span").text(0);
+		if(isRegistered(getNextChallengeName())){
+			updateNextChallenge();
+		}
 	}
 }
 
@@ -856,13 +864,13 @@ function populateDashboard(user){
 
 function updateNextChallenge(){
 	$(".js-nextChallenge").text("You are registered for " + getNextChallengeName() + " challenge.");		
-	$('.js-nextChallenge').unbind("click");
+	$('.js-nextChallenge').off("click", handleChallengeSignUp);
 	$(".js-nextChallenge").css("cursor", "default");
 }
 
 function resetNextChallenge(){
 	$(".js-nextChallenge").text("Sign Up for the next month's challenge");
-	$('.js-nextChallenge').click(handleChallengeSignUp);
+	$('.js-nextChallenge').on("click", handleChallengeSignUp);
 	$('.js-nextChallenge').css("cursor","pointer");
 }
 
