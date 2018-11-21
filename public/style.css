@@ -176,14 +176,16 @@ li {
 .streakCls{
 	font-size: 18px;
 	color:white;
-	text-align: left;	
+	text-align: left;
+	font-family: Arial, Helvetica, sans-serif;
+	font-weight: 550;	
 }
 
 .streakCls > span{
 	color: yellow;
 	font-size: 20px;
 	font-weight: bold;
-	font-style: italic;
+	font-style: italic;	
 }
 
 .challengeCls {
@@ -802,7 +804,8 @@ progress {
 }
 
 #delete-btn{
-	margin:15px 60px;
+	/*margin:15px 60px;*/
+	margin: 15px auto 0 auto;
 	width: 150px;
 	height: 35px;
 	border: 1px solid white;
@@ -811,6 +814,7 @@ progress {
 	color: #68051a; 
 	font-size: 14px;
 	font-weight: bold;
+	display:block;
 }
 
 .js-currentChallenge{
@@ -822,7 +826,7 @@ progress {
 }
 
 .defineChallenge{
-	font-size: 22px;
+	font-size: 20px;
 }
 
 
