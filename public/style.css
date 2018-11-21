@@ -475,7 +475,7 @@ p.textClass{
 
 .loginForm{
 	width:300px;
-	height:350px;
+	/*height:350px;*/
 	padding: 25px 0 0 0;
 }
 
@@ -497,11 +497,25 @@ input{
 	font-size: 20px;
 	margin-top:10px;
 	border:1px solid blue;
+	padding-left: 5px;
 }
 label{
 	font-size: 18px;
 	font-weight: bold;
 	color:black;
+}
+
+#demoDetails{
+	font-size: 16px;
+	color: black;
+	font-weight:bold;
+}
+#demoDetails div:first-child{
+	text-decoration: underline;
+}
+
+#demoDetails div{
+	margin-bottom: 2px;
 }
 
 .signUpForm div > button, .loginForm div > button{
