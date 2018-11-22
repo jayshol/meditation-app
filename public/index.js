@@ -22,6 +22,7 @@ function handleNavigationClicks(){
 	$('#dashboardBtn').click(displayDashboard);
 	$('#challengeBtn').click(challengeReport);
 	$('#meditate-btn').click(meditationPage);
+	$('.closeBtn').click(meditationPage);
 	$('#delete-btn').click(handleDelete);
 	$('.audio-container').on("click", ".js-text", displayMeditationWindow);
 	$('.js-nextChallenge').on("click", handleChallengeSignUp);

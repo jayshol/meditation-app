@@ -93,6 +93,16 @@ main{
 	margin-right: 20px;
 }
 
+.closeBtn{
+	font-size: 14px;
+	margin: 15px auto;
+	width:100px;
+	height:30px;
+	background-color: transparent;
+	font-weight: 550;
+	border-radius: 15px;	
+}
+
 .captionCls {
 	color:black;
 	font-style: italic;
@@ -651,7 +661,7 @@ label{
 	width: 300px;
 	/*border: 1px solid white;	*/
 	display: inline-block;
-	margin: 0 auto 25px;	
+	margin: 0 auto;	
 	line-height: 200px;
 
 }
