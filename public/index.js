@@ -1,6 +1,6 @@
 
-//const serverBase = '//localhost:8080/';
-const serverBase = 'https://shrouded-peak-49521.herokuapp.com/';
+const serverBase = '//localhost:8080/';
+//const serverBase = 'https://shrouded-peak-49521.herokuapp.com/';
 const Users_Url = serverBase + 'api/users';
 const Audio_Url = serverBase + 'api/materials/audios';
 const Badge_Url = serverBase + 'api/materials/badges';
@@ -22,9 +22,10 @@ function handleNavigationClicks(){
 	$('#dashboardBtn').click(displayDashboard);
 	$('#challengeBtn').click(challengeReport);
 	$('#meditate-btn').click(meditationPage);
+	$('.closeBtn').click(meditationPage);
 	$('#delete-btn').click(handleDelete);
 	$('.audio-container').on("click", ".js-text", displayMeditationWindow);
-	$('.js-nextChallenge').click(handleChallengeSignUp);
+	$('.js-nextChallenge').on("click", handleChallengeSignUp);
 	$('#signUp').click(displaySignUp);
 	$('#loginBtn').click(displayLogin);
 	$('#homeBtn').click(function(){
@@ -108,9 +109,10 @@ function handleDropdown() {
 
 function closeAlert(){
 	$('.alertClass').hide();
+	return false;
 }
 function closeConfirm(){
-	$('.confirmClass').hide();
+	$('.confirmClass').hide();	
 }
 
 function showAlert(message){
@@ -127,7 +129,9 @@ function showConfirm(message){
 function handleWindowClick(e){	
   if (!e.target.matches('.dropbtn')) {	
       $('#drop-down').removeClass("show");
-  }	   	
+  }
+
+  closeAlert();
 }
 
 //handles the Ok, Cancel button of the confirm box
@@ -276,7 +280,8 @@ function logoutUser(){
 	localUserObject = null;	
 	togglePageManager('.container-home');
 	manageNavBeforeLogin();
-	showAlert("You are successfully logged out.");	
+	showAlert("You are successfully logged out.");
+	return false;	
 }
 
 // success message after sign up.
@@ -287,11 +292,12 @@ function userSignedUp(data){
 }
 
 //sign up a user for 21-day challenge
-function handleChallengeSignUp(){
+function handleChallengeSignUp(event){
 	const month = monthNames[new Date().getMonth() + 1];
 	const text = "You will be signed up for " + month + " month's 21-day challenge";
 	caller = "signUp";
-	showConfirm(text);	
+	showConfirm(text);
+	return false;	
 }
 
 //register user for the 21-day challenge and update both
@@ -639,7 +645,12 @@ function handleData(challenge){
 		displayUsers(challenge);
 		displayChallengeData(challenge);
 	}else{
-		showAlert("Challenge is not available");
+		//showAlert("Challenge is not available");
+		$(".month-span").text(fullMonthNames[new Date().getMonth()]);
+		$(".user-span").text(0);
+		if(isRegistered(getNextChallengeName())){
+			updateNextChallenge();
+		}
 	}
 }
 
@@ -800,14 +811,16 @@ function togglePageManager(pageName){
 		$('.playerDiv').hide();
 		$(document.body).addClass("regularBackground");
 		$(document.body).removeClass("backgroundClass");
-		$('#navbarDiv').removeClass("meditate-navbar");		
+		$('#navbarDiv').removeClass("meditate-navbar");
+		$('#drop-down').removeClass('meditate-dropdown-content');
 	}else{
 		$('.navbarHolder').show();
 		$('#playerHolder').show();
 		$('.playerDiv').show();
 		$(document.body).addClass("backgroundClass");
 		$(document.body).removeClass("regularBackground");		
-		$('#navbarDiv').addClass("meditate-navbar");		
+		$('#navbarDiv').addClass("meditate-navbar");
+		$('#drop-down').addClass('meditate-dropdown-content');
 	}
 
 	const pageNames = ['.container-home', 
@@ -852,13 +865,13 @@ function populateDashboard(user){
 
 function updateNextChallenge(){
 	$(".js-nextChallenge").text("You are registered for " + getNextChallengeName() + " challenge.");		
-	$('.js-nextChallenge').unbind("click");
+	$('.js-nextChallenge').off("click", handleChallengeSignUp);
 	$(".js-nextChallenge").css("cursor", "default");
 }
 
 function resetNextChallenge(){
 	$(".js-nextChallenge").text("Sign Up for the next month's challenge");
-	$('.js-nextChallenge').click(handleChallengeSignUp);
+	$('.js-nextChallenge').on("click", handleChallengeSignUp);
 	$('.js-nextChallenge').css("cursor","pointer");
 }
 
