@@ -334,6 +334,7 @@ h3{
 	margin: 70px auto 10px auto;
 	/*padding: 10px;*/
 	overflow-y: visible;
+	text-align: center;
 }
 /*
 #outerContainer{
@@ -399,6 +400,7 @@ h3{
 	font-size: 22px;
 	font-weight: bolder;
 	padding:2px;
+	left:0;
 }
 
 .js-text:hover{
@@ -1029,6 +1031,7 @@ progress {
   	}
 }
 
+/* ipad pro */
 @media only screen 
   and (min-device-width: 768px) 
   and (max-device-width: 1024px) 
@@ -1051,7 +1054,142 @@ progress {
 	.caption{
 		font-size: 20px;
 	}
+
+	.image-container{
+		height: 120px;
+		width:120px;
+		margin:10px;
+	}
 }
+
+@media only screen 
+  and (min-device-width: 1024px) 
+  and (max-device-width: 1366px) 
+  and (-webkit-min-device-pixel-ratio: 1.5) {
+
+  	.image-container{
+		height: 150px;
+		width:150px;
+		margin:10px;
+	}
+	.js-text{
+		height:150px;
+		width: 150px;
+		line-height: 80px;	
+	}
+}
+
+@media only screen 
+and (min-device-width : 320px) 
+and (max-device-width : 568px) { 
+
+	.image-container{
+		height: 60px;
+		width:60px;
+		margin:10px;
+	}
+	.js-text{
+		height:60px;
+		width:60px;
+		line-height: 30px;	
+	}
+
+} 
+
+@media only screen 
+and (min-width : 320px) 
+and (max-width : 568px){
+
+	.image-container{
+		height: 75px;
+		width:75px;
+		margin:10px;
+	}
+	.js-text{
+		height:75px;
+		width:75px;
+		line-height: 55px;	
+	}
+	.audio-container{
+		width:100%;
+	}
+
+	h2.textClass{
+		margin-top: 10px;
+    	margin-bottom: 10px;
+	}
+}
+
+@media screen 
+and (device-width: 360px) 
+and (device-height: 640px) 
+and (-webkit-device-pixel-ratio: 3){
+	.image-container{
+		height: 60px;
+		width:60px;
+		margin:10px;
+	}
+	.js-text{
+		height:60px;
+		width:60px;
+		line-height: 30px;	
+	}
+
+}
+
+
+
+/*iphone 6/7/8 plus */
+
+@media only screen 
+and (min-device-width : 414px) 
+and (max-device-width : 736px) { 
+
+	.image-container{
+		height: 90px;
+		width:90px;
+		margin:10px;
+	}
+	.js-text{
+		height:90px;
+		width:90px;
+		line-height: 70px;	
+	}
+}
+
+/* iphone X */
+@media only screen 
+and (min-device-width : 375px) 
+and (max-device-width : 812px)
+and (-webkit-device-pixel-ratio : 3) { 
+
+	.image-container{
+		height: 80px;
+		width:80px;
+		margin:10px;
+	}
+	.js-text{
+		height:80px;
+		width:80px;
+		line-height: 60px;	
+	}
+
+}
+
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+	.image-container{
+		height: 80px;
+		width:80px;
+		margin:10px;
+	}
+	.js-text{
+		height:80px;
+		width:80px;
+		line-height: 60px;	
+	}
+}
+
+
 
 
 
