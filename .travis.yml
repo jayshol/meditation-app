@@ -4,6 +4,6 @@ deploy:
   provider: heroku
   api_key:
     secure: IFSIpMSIVe/CbS8E3GEDDKQ0qx5SncM6WAnrx4qY+dyKQzLTI6tQcAol4E6e15nQ1AsuOnBbZP/3c9Imsaj0wI8l5tC4FCK1Q8uRuiWVauzMihn9SMJzZim37/pCCREvpuDeefaQUwHqmX7SqXJtMHZzS1ugOSt8m2kIqv+JXWJeQt8TPGSz8VEuU2geHutCWTVtR5d3KtpovM5xpQblkPq4E6WPBUhafFKAu6Q4KutxjgJ0Ql2Ier2aD0kwX5HTHyXkP805J9Qn3ad5ETY/LtYYIFbNKc07IjaNukGsBsSIgfhFByUeQkUYl5PtysHRnMI7n/tgJBYN+Fmx9i9gXoeCJVOurklKW718J8LE+WmSuL9soENw4dEkxZFl7emxxuQ9mlJBmn+YmmbpAGrskThxDwpJhfkNT+VyND1U2+aB6jGiufYp4RTyirsIKK7RJ9oKuOIeN9rIIaDoBz6n0p5/5Vlhpvpe3iYtZmzZWMIp+lrxn9Etzy2y4+mOMz2NpcrYxtawg2S/CLY3IHfX7bSjORN0wp7RK0fV7vovxPDjWSejEoB89W8IMJiuqiB10KD7OaNok9XF4J8FYAjeR+HPkN9Y1L+V9FH7Lw3AtErE3AV7lkS/8sdGx/NiSKojcS+V3jIYhSSX1MwOTzi+IHKaWDP7PSCRGRW2r6f2v+o=
-  app: meditation-app
+  app: focus-meditation-app
   on:
     repo: jayshol/meditation-app
