@@ -1,6 +1,6 @@
 
-const serverBase = '//localhost:8080/';
-//const serverBase = 'https://focus-meditation-app.herokuapp.com/';
+//const serverBase = '//localhost:8080/';
+const serverBase = 'https://focus-meditation-app.herokuapp.com/';
 const Users_Url = serverBase + 'api/users';
 const Audio_Url = serverBase + 'api/materials/audios';
 const Badge_Url = serverBase + 'api/materials/badges';
@@ -812,6 +812,7 @@ function togglePageManager(pageName){
 		$(document.body).addClass("regularBackground");
 		$(document.body).removeClass("backgroundClass");
 		$('#navbarDiv').removeClass("meditate-navbar");
+		$('#navbarDiv').show();
 		$('#drop-down').removeClass('meditate-dropdown-content');
 	}else{
 		$('.navbarHolder').show();
